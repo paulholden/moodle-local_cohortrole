@@ -27,5 +27,7 @@ Paul Holden (pholden@greenhead.ac.uk)
 
 Changes
 -------
+Release 2013112701
+- Added cron callback.
 Release 2013112600
-- First release
+- First release.

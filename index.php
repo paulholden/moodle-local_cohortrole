@@ -45,7 +45,7 @@ if ($records = local_cohortrole_list()) {
             html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'), 'alt' => get_string('delete')))
         );
 
-        $table->add_data(array($record->cohort, $record->role, $delete));
+        $table->add_data(array($record->name, $record->role, $delete));
     }
 
     $table->print_html();

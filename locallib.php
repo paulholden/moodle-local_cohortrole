@@ -232,7 +232,7 @@ function local_cohortrole_list() {
 
     $rolenames = role_get_names(context_system::instance(), ROLENAME_ALIAS, true);
 
-    $records = $DB->get_records_sql('SELECT cr.id, c.name AS cohort, r.id AS roleid
+    $records = $DB->get_records_sql('SELECT cr.id, c.id AS cohortid, c.name, r.id AS roleid
                                        FROM {local_cohortrole} cr
                                        JOIN {cohort} c ON c.id = cr.cohortid
                                        JOIN {role} r ON r.id = cr.roleid

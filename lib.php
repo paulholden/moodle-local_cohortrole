@@ -22,7 +22,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_cohortrole';
-$plugin->version  = 2013112701;
-$plugin->requires = 2013111800; // Moodle 2.6 onwards.
-$plugin->maturity = MATURITY_STABLE;
+require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
+
+/**
+ * Cron callback, re-synchronize form cohorts to roles; in some cases a user
+ * can be a member of multiple cohorts that each synchronize with the same role,
+ * and removing them from one of the cohorts will remove them from that role
+ *
+ * @return void
+ */
+function local_cohortrole_cron() {
+    $records = local_cohortrole_list();
+
+    foreach ($records as $record) {
+        mtrace("Synchronizing cohort '{$record->name}' to role '{$record->role}'");
+
+        local_cohortrole_synchronize($record->cohortid, $record->roleid);
+    }
+}

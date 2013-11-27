@@ -26,7 +26,7 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager();
- 
+
     if ($oldversion < 2013112700) {
         // Define field userid to be added to local_cohortrole.
         $table = new xmldb_table('local_cohortrole');
