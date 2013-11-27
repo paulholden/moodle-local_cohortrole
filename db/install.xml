@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/cohortrole/db" VERSION="20131126" COMMENT="XMLDB file for Moodle local/cohortrole"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_cohortrole" COMMENT="Contains cohort to role synchronization definitions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="cohortid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the cohort"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the role"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_cohort" TYPE="foreign" FIELDS="cohortid" REFTABLE="cohort" REFFIELDS="id"/>
+        <KEY NAME="fk_role" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_cohort_role" UNIQUE="true" FIELDS="cohortid, roleid" COMMENT="Cohort and role identifiers must be unique"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
