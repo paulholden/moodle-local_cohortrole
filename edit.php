@@ -68,6 +68,8 @@ if ($mform->is_cancelled()) {
     $record = new stdClass;
     $record->cohortid = $data->cohortid;
     $record->roleid = $data->roleid;
+    $record->userid = $USER->id;
+    $record->timecreated = time();
 
     $DB->insert_record('local_cohortrole', $record);
 
