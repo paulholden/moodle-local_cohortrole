@@ -1,5 +1,5 @@
-Moodle Cohort Role Synchronization Plugin
-=========================================
+Moodle Cohort Role Synchronization
+==================================
 
 Requirements
 ------------
@@ -29,5 +29,6 @@ Changes
 -------
 Release 2013112701
 - Added cron callback.
+
 Release 2013112600
 - First release.

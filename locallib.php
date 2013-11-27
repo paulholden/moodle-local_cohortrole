@@ -75,8 +75,8 @@ class local_cohortrole_form extends moodleform {
  */
 function local_cohortrole_cohort_deleted(\core\event\cohort_deleted $event) {
     global $DB;
-
-    if ($event->contextid == SITEID) {
+    // We are only interested in cohorts that are defined in the system context.
+    if ($event->contextlevel == CONTEXT_SYSTEM) {
         $cohortid = $event->objectid;
 
         $roleids = local_cohortrole_get_cohort_roles($cohortid);
@@ -97,7 +97,7 @@ function local_cohortrole_cohort_deleted(\core\event\cohort_deleted $event) {
  */
 function local_cohortrole_cohort_member_added(\core\event\cohort_member_added $event) {
     // We are only interested in cohorts that are defined in the system context.
-    if ($event->contextid == SITEID) {
+    if ($event->contextlevel == CONTEXT_SYSTEM) {
         $cohortid = $event->objectid;
         $userid = $event->relateduserid;
 
@@ -117,7 +117,7 @@ function local_cohortrole_cohort_member_added(\core\event\cohort_member_added $e
  */
 function local_cohortrole_cohort_member_removed(\core\event\cohort_member_removed $event) {
     // We are only interested in cohorts that are defined in the system context.
-    if ($event->contextid == SITEID) {
+    if ($event->contextlevel == CONTEXT_SYSTEM) {
         $cohortid = $event->objectid;
         $userid = $event->relateduserid;
 
