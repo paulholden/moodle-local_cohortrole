@@ -79,9 +79,11 @@ function local_cohortrole_cohort_deleted(\core\event\cohort_deleted $event) {
     if ($event->contextlevel == CONTEXT_SYSTEM) {
         $cohortid = $event->objectid;
 
-        local_cohortrole_unsynchronize($cohortid);
+        if (local_cohortrole_exists($cohortid)) {
+            local_cohortrole_unsynchronize($cohortid);
 
-        $DB->delete_records('local_cohortrole', array('cohortid' => $cohortid));
+            $DB->delete_records('local_cohortrole', array('cohortid' => $cohortid));
+        }
     }
 }
 
@@ -96,11 +98,14 @@ function local_cohortrole_cohort_member_added(\core\event\cohort_member_added $e
     // We are only interested in cohorts that are defined in the system context.
     if ($event->contextlevel == CONTEXT_SYSTEM) {
         $cohortid = $event->objectid;
-        $userid = $event->relateduserid;
 
-        $roleids = local_cohortrole_get_cohort_roles($cohortid);
-        foreach ($roleids as $roleid) {
-            local_cohortrole_role_assign($roleid, array($userid));
+        if (local_cohortrole_exists($cohortid)) {
+            $userid = $event->relateduserid;
+
+            $roleids = local_cohortrole_get_cohort_roles($cohortid);
+            foreach ($roleids as $roleid) {
+                local_cohortrole_role_assign($roleid, array($userid));
+            }
         }
     }
 }
@@ -116,11 +121,14 @@ function local_cohortrole_cohort_member_removed(\core\event\cohort_member_remove
     // We are only interested in cohorts that are defined in the system context.
     if ($event->contextlevel == CONTEXT_SYSTEM) {
         $cohortid = $event->objectid;
-        $userid = $event->relateduserid;
 
-        $roleids = local_cohortrole_get_cohort_roles($cohortid);
-        foreach ($roleids as $roleid) {
-            local_cohortrole_role_unassign($roleid, array($userid));
+        if (local_cohortrole_exists($cohortid)) {
+            $userid = $event->relateduserid;
+
+            $roleids = local_cohortrole_get_cohort_roles($cohortid);
+            foreach ($roleids as $roleid) {
+                local_cohortrole_role_unassign($roleid, array($userid));
+            }
         }
     }
 }
@@ -129,13 +137,18 @@ function local_cohortrole_cohort_member_removed(\core\event\cohort_member_remove
  * Test whether a given cohortid+roleid has been defined
  *
  * @param integer $cohortid the id of a cohort
- * @param integer $roleid the id of a role
+ * @param integer|null $roleid the id of a role, or null to just test cohort
  * @return boolean
  */
-function local_cohortrole_exists($cohortid, $roleid) {
+function local_cohortrole_exists($cohortid, $roleid = null) {
     global $DB;
 
-    return $DB->record_exists('local_cohortrole', array('cohortid' => $cohortid, 'roleid' => $roleid));
+    $params = array('cohortid' => $cohortid);
+    if ($roleid !== null) {
+        $params['roleid'] = $roleid;
+    }
+
+    return $DB->record_exists('local_cohortrole', $params);
 }
 
 /**
@@ -178,11 +191,9 @@ function local_cohortrole_role_unassign($roleid, array $userids) {
 function local_cohortrole_synchronize($cohortid, $roleid) {
     global $DB;
 
-    if (local_cohortrole_exists($cohortid, $roleid)) {
-        $userids = $DB->get_records_menu('cohort_members', array('cohortid' => $cohortid), null, 'id, userid');
+    $userids = $DB->get_records_menu('cohort_members', array('cohortid' => $cohortid), null, 'id, userid');
 
-        local_cohortrole_role_assign($roleid, $userids);
-    }
+    local_cohortrole_role_assign($roleid, $userids);
 }
 
 /**
