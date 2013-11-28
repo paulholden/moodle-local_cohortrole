@@ -41,10 +41,7 @@ $returnurl = new moodle_url('/local/cohortrole/index.php');
 
 if ($delete and $definition->id) {
     if ($confirm and confirm_sesskey()) {
-        $roleids = local_cohortrole_get_cohort_roles($definition->cohortid);
-        foreach ($roleids as $roleid) {
-            local_cohortrole_unsynchronize($definition->cohortid, $roleid);
-        }
+        local_cohortrole_unsynchronize($definition->cohortid, $definition->roleid);
 
         $DB->delete_records('local_cohortrole', array('id' => $definition->id));
 

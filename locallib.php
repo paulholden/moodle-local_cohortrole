@@ -79,10 +79,7 @@ function local_cohortrole_cohort_deleted(\core\event\cohort_deleted $event) {
     if ($event->contextlevel == CONTEXT_SYSTEM) {
         $cohortid = $event->objectid;
 
-        $roleids = local_cohortrole_get_cohort_roles($cohortid);
-        foreach ($roleids as $roleid) {
-            local_cohortrole_unsynchronize($cohortid, $roleid);
-        }
+        local_cohortrole_unsynchronize($cohortid);
 
         $DB->delete_records('local_cohortrole', array('cohortid' => $cohortid));
     }
@@ -172,7 +169,7 @@ function local_cohortrole_role_unassign($roleid, array $userids) {
 }
 
 /**
- * Performs synchronization of users from a cohort to a role
+ * Add users to a role that synchronizes from a cohort
  *
  * @param integer $cohortid the id of a cohort
  * @param integer $roleid the id of a role
@@ -182,31 +179,32 @@ function local_cohortrole_synchronize($cohortid, $roleid) {
     global $DB;
 
     if (local_cohortrole_exists($cohortid, $roleid)) {
-        $users = $DB->get_records_menu('cohort_members', array('cohortid' => $cohortid), null, 'id, userid');
+        $userids = $DB->get_records_menu('cohort_members', array('cohortid' => $cohortid), null, 'id, userid');
 
-        local_cohortrole_role_assign($roleid, $users);
+        local_cohortrole_role_assign($roleid, $userids);
     }
 }
 
 /**
- * Removes users from a role who were synchronized from a cohort
+ * Remove users from a role that was synchronized from a cohort
  *
  * @param integer $cohortid the id of a cohort
- * @param integer $roleid the id of a role
+ * @param integer|null $roleid the id of a role, all roles if null
  * @return void
  */
-function local_cohortrole_unsynchronize($cohortid, $roleid) {
-    if (local_cohortrole_exists($cohortid, $roleid)) {
-        $where = 'ra.component = :component';
-        $params = array('component' => LOCAL_COHORTROLE_ROLE_COMPONENT);
+function local_cohortrole_unsynchronize($cohortid, $roleid = null) {
+    $params = array('contextid' => context_system::instance()->id, 'component' => LOCAL_COHORTROLE_ROLE_COMPONENT);
 
-        $userids = array();
-        $users = get_role_users($roleid, context_system::instance(), false, 'u.id', null, null, null, null, null, $where, $params);
-        foreach ($users as $user) {
-            $userids[] = $user->id;
-        }
+    if ($roleid === null) {
+        $roleids = local_cohortrole_get_cohort_roles($cohortid);
+    } else {
+        $roleids = array($roleid);
+    }
 
-        local_cohortrole_role_unassign($roleid, $userids);
+    foreach ($roleids as $roleid) {
+        $params['roleid'] = $roleid;
+
+        role_unassign_all($params, false, false);
     }
 }
 
