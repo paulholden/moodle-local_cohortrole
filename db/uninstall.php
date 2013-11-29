@@ -31,12 +31,9 @@ require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
  * @return bool true if success
  */
 function xmldb_local_cohortrole_uninstall() {
-    global $DB;
+    $params = array('contextid' => context_system::instance()->id, 'component' => LOCAL_COHORTROLE_ROLE_COMPONENT);
 
-    $cohorts = $DB->get_records_sql('SELECT DISTINCT cohortid FROM {local_cohortrole}');
-    foreach ($cohorts as $cohort) {
-        local_cohortrole_unsynchronize($cohort->cohortid);
-    }
+    role_unassign_all($params, false, false);
 
     return true;
 }
