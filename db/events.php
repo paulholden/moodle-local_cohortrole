@@ -25,19 +25,16 @@ defined('MOODLE_INTERNAL') || die();
 $observers = array(
     array(
         'eventname' => '\core\event\cohort_deleted',
-        'includefile' => '/local/cohortrole/locallib.php',
-        'callback' => 'local_cohortrole_cohort_deleted',
+        'callback'  => '\local_cohortrole\observers::cohort_deleted',
     ),
 
     array(
         'eventname' => '\core\event\cohort_member_added',
-        'includefile' => '/local/cohortrole/locallib.php',
-        'callback' => 'local_cohortrole_cohort_member_added',
+        'callback'  => '\local_cohortrole\observers::cohort_member_added',
     ),
 
     array(
         'eventname' => '\core\event\cohort_member_removed',
-        'includefile' => '/local/cohortrole/locallib.php',
-        'callback' => 'local_cohortrole_cohort_member_removed',
+        'callback'  => '\local_cohortrole\observers::cohort_member_removed',
     ),
 );
