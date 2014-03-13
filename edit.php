@@ -59,7 +59,7 @@ if ($delete and $definition->id) {
     echo $OUTPUT->footer();
 }
 
-$mform = new local_cohortrole_form($editurl);
+$mform = new \local_cohortrole\form\edit($editurl);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);

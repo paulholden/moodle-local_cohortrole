@@ -24,50 +24,6 @@ defined('MOODLE_INTERNAL') || die();
 
 define('LOCAL_COHORTROLE_ROLE_COMPONENT', 'local_cohortrole');
 
-require_once($CFG->libdir . '/formslib.php');
-require_once($CFG->dirroot . '/cohort/lib.php');
-
-class local_cohortrole_form extends moodleform {
-
-    /**
-     * Form definition
-     *
-     * @return void
-     */
-    protected function definition() {
-        $mform = $this->_form;
-
-        $mform->addElement('select', 'cohortid', get_string('cohort', 'local_cohortrole'), local_cohortrole_system_cohorts());
-        $mform->addRule('cohortid', get_string('required'), 'required', null, 'client');
-        $mform->setType('cohortid', PARAM_INT);
-        $mform->addHelpButton('cohortid', 'cohort', 'local_cohortrole');
-
-        $mform->addElement('select', 'roleid', get_string('role', 'local_cohortrole'), local_cohortrole_system_roles());
-        $mform->addRule('roleid', get_string('required'), 'required', null, 'client');
-        $mform->setType('roleid', PARAM_INT);
-        $mform->addHelpButton('roleid', 'role', 'local_cohortrole');
-
-        $this->add_action_buttons();
-    }
-
-    /**
-     * Form validation
-     *
-     * @param array $data
-     * @param array $files
-     * @return array the errors that were found
-     */
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        if (local_cohortrole_exists($data['cohortid'], $data['roleid'])) {
-            $errors['cohortid'] = get_string('errorexists', 'local_cohortrole');
-        }
-
-        return $errors;
-    }
-}
-
 /**
  * Test whether a given cohortid+roleid has been defined
  *
@@ -190,33 +146,4 @@ function local_cohortrole_list() {
     }
 
     return $records;
-}
-
-/**
- * Get cohorts that are defined in the system context
- *
- * @return array cohort id => name
- */
-function local_cohortrole_system_cohorts() {
-    $cohorts = cohort_get_cohorts(context_system::instance()->id, null, null);
-
-    $result = array();
-    foreach ($cohorts['cohorts'] as $cohort) {
-        $result[$cohort->id] = $cohort->name;
-    }
-
-    return $result;
-}
-
-/**
- * Get roles that are assignable in the system context
- *
- * @return array role id => name
- */
-function local_cohortrole_system_roles() {
-    $roles = get_assignable_roles(context_system::instance(), ROLENAME_ALIAS);
-
-    core_collator::asort($roles, core_collator::SORT_STRING);
-
-    return $roles;
 }

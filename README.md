@@ -19,14 +19,21 @@ Usage
 2. Create system-level assignable role(s) - optional, you can also use existing roles.
 3. Visit Cohort role synchronization page.
 4. Create new link between cohort and role.
-5. Users will automatically by (un)assigned to the role according to their membership of selected cohort.
+5. Users will automatically be (un)assigned to the role according to their membership of selected cohort.
 
 Author
 ------
 Paul Holden (pholden@greenhead.ac.uk)
 
+- Updates: https://moodle.org/plugins/view.php?plugin=local_cohortrole
+- Latest code: https://github.com/paulholden/moodle-local_cohortrole
+
 Changes
 -------
+Release 1.2.1 (build 2014031302):
+- Improved language strings/help.
+- API updates.
+
 Release 1.1.0 (build 2013112701):
 - Added cron callback.
 
