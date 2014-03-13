@@ -37,13 +37,15 @@ class local_cohortrole_form extends moodleform {
     protected function definition() {
         $mform = $this->_form;
 
-        $mform->addElement('select', 'cohortid', get_string('cohort', 'cohort'), local_cohortrole_system_cohorts());
+        $mform->addElement('select', 'cohortid', get_string('cohort', 'local_cohortrole'), local_cohortrole_system_cohorts());
         $mform->addRule('cohortid', get_string('required'), 'required', null, 'client');
         $mform->setType('cohortid', PARAM_INT);
+        $mform->addHelpButton('cohortid', 'cohort', 'local_cohortrole');
 
-        $mform->addElement('select', 'roleid', get_string('role'), local_cohortrole_system_roles());
+        $mform->addElement('select', 'roleid', get_string('role', 'local_cohortrole'), local_cohortrole_system_roles());
         $mform->addRule('roleid', get_string('required'), 'required', null, 'client');
         $mform->setType('roleid', PARAM_INT);
+        $mform->addHelpButton('roleid', 'role', 'local_cohortrole');
 
         $this->add_action_buttons();
     }

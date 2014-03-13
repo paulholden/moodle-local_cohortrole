@@ -49,11 +49,13 @@ if ($delete and $definition->id) {
     }
 
     $PAGE->navbar->add(get_string('delete'));
+
     echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('heading_delete', 'local_cohortrole'));
 
     $editurl->params(array('id' => $definition->id, 'delete' => 1, 'confirm' => 1));
 
-    echo $OUTPUT->confirm(get_string('heading_delete', 'local_cohortrole'), $editurl, $returnurl);
+    echo $OUTPUT->confirm(get_string('deleteconfirm', 'local_cohortrole'), $editurl, $returnurl);
     echo $OUTPUT->footer();
 }
 

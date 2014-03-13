@@ -22,9 +22,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['addnew'] = 'To define a new synchronization, press Continue';
-$string['errorexists'] = 'Synchronization already exists';
+$string['cohort'] = 'Cohort';
+$string['cohort_help'] = 'List of cohorts that exist in the system context';
+$string['deleteconfirm'] = 'Are you sure you want to delete this synchronization?';
+$string['errorexists'] = 'Synchronization already defined';
 $string['heading_add'] = 'Define new synchronization';
-$string['heading_delete'] = 'Delete existing synchronization';
+$string['heading_delete'] = 'Delete defined synchronization';
 $string['heading_index'] = 'Currently defined synchronization';
 $string['pluginname'] = 'Cohort role synchronization';
+$string['role'] = 'Role';
+$string['role_help'] = 'List of assignable roles in the system context';

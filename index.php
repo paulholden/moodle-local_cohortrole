@@ -35,7 +35,7 @@ echo $OUTPUT->heading(get_string('heading_index', 'local_cohortrole'));
 if ($records = local_cohortrole_list()) {
     $table = new flexible_table('local_cohortrole');
     $table->define_columns(array('cohort', 'role', 'edit'));
-    $table->define_headers(array(get_string('cohort', 'cohort'), get_string('role'), get_string('edit')));
+    $table->define_headers(array(get_string('cohort', 'local_cohortrole'), get_string('role', 'local_cohortrole'), get_string('edit')));
     $table->define_baseurl($PAGE->url);
     $table->setup();
 
@@ -51,7 +51,6 @@ if ($records = local_cohortrole_list()) {
     $table->print_html();
 }
 
-echo $OUTPUT->box(get_string('addnew', 'local_cohortrole'), 'generalbox', 'notice');
-echo $OUTPUT->continue_button(new moodle_url('/local/cohortrole/edit.php'));
+echo $OUTPUT->single_button(new moodle_url('/local/cohortrole/edit.php'), get_string('add'), 'get', array('class' => 'continuebutton'));
 
 echo $OUTPUT->footer();
