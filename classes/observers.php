@@ -38,12 +38,12 @@ class observers {
         global $DB;
 
         if ($event->contextlevel == CONTEXT_SYSTEM) {
-            $cohortid = $event->objectid;
+            $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            if (local_cohortrole_exists($cohortid)) {
-                local_cohortrole_unsynchronize($cohortid);
+            if (local_cohortrole_exists($cohort->id)) {
+                local_cohortrole_unsynchronize($cohort->id);
 
-                $DB->delete_records('local_cohortrole', array('cohortid' => $cohortid));
+                $DB->delete_records('local_cohortrole', array('cohortid' => $cohort->id));
             }
         }
     }
@@ -56,14 +56,14 @@ class observers {
      */
     public static function cohort_member_added(\core\event\cohort_member_added $event) {
         if ($event->contextlevel == CONTEXT_SYSTEM) {
-            $cohortid = $event->objectid;
+            $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            if (local_cohortrole_exists($cohortid)) {
+            if (local_cohortrole_exists($cohort->id)) {
                 $userid = $event->relateduserid;
 
-                $roleids = local_cohortrole_get_cohort_roles($cohortid);
+                $roleids = local_cohortrole_get_cohort_roles($cohort->id);
                 foreach ($roleids as $roleid) {
-                    local_cohortrole_role_assign($cohortid, $roleid, array($userid));
+                    local_cohortrole_role_assign($cohort->id, $roleid, array($userid));
                 }
             }
         }
@@ -77,14 +77,14 @@ class observers {
      */
     public static function cohort_member_removed(\core\event\cohort_member_removed $event) {
         if ($event->contextlevel == CONTEXT_SYSTEM) {
-            $cohortid = $event->objectid;
+            $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            if (local_cohortrole_exists($cohortid)) {
+            if (local_cohortrole_exists($cohort->id)) {
                 $userid = $event->relateduserid;
 
-                $roleids = local_cohortrole_get_cohort_roles($cohortid);
+                $roleids = local_cohortrole_get_cohort_roles($cohort->id);
                 foreach ($roleids as $roleid) {
-                    local_cohortrole_role_unassign($cohortid, $roleid, array($userid));
+                    local_cohortrole_role_unassign($cohort->id, $roleid, array($userid));
                 }
             }
         }
