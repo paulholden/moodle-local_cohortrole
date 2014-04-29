@@ -26,4 +26,5 @@ $plugin->component = 'local_cohortrole';
 $plugin->release  = '1.2.1';
 $plugin->version  = 2014031302;
 $plugin->requires = 2013111800; // Moodle 2.6 onwards.
+$plugin->cron     = HOURSECS;
 $plugin->maturity = MATURITY_STABLE;
