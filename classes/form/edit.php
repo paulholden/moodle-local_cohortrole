@@ -31,6 +31,17 @@ require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
 class edit extends \moodleform {
 
     /**
+     * Get a valid unique identifier for the namespaced form
+     *
+     * @return string
+     */
+    protected function get_form_identifier() {
+        $identifier = parent::get_form_identifier();
+
+        return preg_replace('/[^a-z_]/i', '_', $identifier);
+    }
+
+    /**
      * Form definition
      *
      * @return void
