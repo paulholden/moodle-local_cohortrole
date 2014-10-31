@@ -39,16 +39,17 @@ if ($records = local_cohortrole_list()) {
     $table->define_baseurl($PAGE->url);
     $table->setup();
 
+    $icon = new pix_icon('t/delete', get_string('delete'), 'core', array('class' => 'iconsmall'));
+
     foreach ($records as $record) {
-        $delete = html_writer::link(
-            new moodle_url('/local/cohortrole/edit.php', array('id' => $record->id, 'delete' => 1)),
-            html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'), 'alt' => get_string('delete')))
-        );
+        $delete = $OUTPUT->action_icon(new moodle_url('/local/cohortrole/edit.php', array('id' => $record->id, 'delete' => 1)), $icon);
 
         $table->add_data(array($record->name, $record->role, $delete));
     }
 
     $table->print_html();
+} else {
+    echo $OUTPUT->notification(get_string('nothingtodisplay'));
 }
 
 echo $OUTPUT->single_button(new moodle_url('/local/cohortrole/edit.php'), get_string('add'), 'get', array('class' => 'continuebutton'));

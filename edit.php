@@ -57,6 +57,7 @@ if ($delete and $definition->id) {
 
     echo $OUTPUT->confirm(get_string('deleteconfirm', 'local_cohortrole'), $editurl, $returnurl);
     echo $OUTPUT->footer();
+    die;
 }
 
 $mform = new \local_cohortrole\form\edit($editurl);
