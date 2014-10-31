@@ -59,11 +59,11 @@ class observers {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
             if (local_cohortrole_exists($cohort->id)) {
-                $userid = $event->relateduserid;
+                $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
                 $roleids = local_cohortrole_get_cohort_roles($cohort->id);
                 foreach ($roleids as $roleid) {
-                    local_cohortrole_role_assign($cohort->id, $roleid, array($userid));
+                    local_cohortrole_role_assign($cohort->id, $roleid, array($user->id));
                 }
             }
         }
@@ -80,11 +80,11 @@ class observers {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
             if (local_cohortrole_exists($cohort->id)) {
-                $userid = $event->relateduserid;
+                $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
                 $roleids = local_cohortrole_get_cohort_roles($cohort->id);
                 foreach ($roleids as $roleid) {
-                    local_cohortrole_role_unassign($cohort->id, $roleid, array($userid));
+                    local_cohortrole_role_unassign($cohort->id, $roleid, array($user->id));
                 }
             }
         }
