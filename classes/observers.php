@@ -89,4 +89,20 @@ class observers {
             }
         }
     }
+
+    /**
+     * Role deleted
+     *
+     * @param \core\event\role_deleted $event the event
+     * @return void
+     */
+    public static function role_deleted(\core\event\role_deleted $event) {
+        global $DB;
+
+        if ($event->contextlevel == CONTEXT_SYSTEM) {
+            $role = $event->get_record_snapshot('role', $event->objectid);
+
+            $DB->delete_records('local_cohortrole', array('roleid' => $role->id));
+        }
+    }
 }
