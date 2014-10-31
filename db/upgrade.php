@@ -55,5 +55,22 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013112700, 'local', 'cohortrole');
     }
 
+    if ($oldversion < 2014103101) {
+        // Make sure that we don't have any records left over pointing to non-existent roles.
+        $sql = 'SELECT cr.id, cr.roleid
+                  FROM {local_cohortrole} cr
+             LEFT JOIN {role} r ON r.id = cr.roleid
+                 WHERE r.id IS NULL';
+
+        if ($records = $DB->get_records_sql_menu($sql)) {
+            $ids = array_keys($records);
+
+            $DB->delete_records_list('local_cohortrole', 'id', $ids);
+        }
+
+        // Cohortrole savepoint reached.
+        upgrade_plugin_savepoint(true, 2014103101, 'local', 'cohortrole');
+    }
+
     return true;
 }
