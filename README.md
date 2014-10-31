@@ -30,6 +30,10 @@ Paul Holden (pholden@greenhead.ac.uk)
 
 Changes
 -------
+Release 1.3 (build 2014103102):
+- Clean up synchronizations when role is deleted.
+- Remove cron callback.
+
 Release 1.2.1 (build 2014031302):
 - Improved language strings/help.
 - API updates.

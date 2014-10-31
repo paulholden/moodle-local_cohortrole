@@ -23,8 +23,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_cohortrole';
-$plugin->release   = '1.2.1';
-$plugin->version   = 2014103101;
+$plugin->release   = '1.3';
+$plugin->version   = 2014103102;
 $plugin->requires  = 2013111800; // Moodle 2.6 onwards.
-$plugin->cron      = HOURSECS;
 $plugin->maturity  = MATURITY_STABLE;

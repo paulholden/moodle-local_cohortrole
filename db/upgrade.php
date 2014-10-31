@@ -72,5 +72,13 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014103101, 'local', 'cohortrole');
     }
 
+    if ($oldversion < 2014103102) {
+        // Unset plugin cron configuration.
+        unset_config('lastcron', 'local_cohortrole');
+
+        // Cohortrole savepoint reached.
+        upgrade_plugin_savepoint(true, 2014103102, 'local', 'cohortrole');
+    }
+
     return true;
 }
