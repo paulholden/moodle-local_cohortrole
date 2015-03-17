@@ -29,22 +29,24 @@ require_login();
 admin_externalpage_setup('local_cohortrole');
 require_capability('moodle/role:assign', context_system::instance());
 
+$strings = get_strings(array('heading_index', 'cohort', 'role'), 'local_cohortrole');
+
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('heading_index', 'local_cohortrole'));
+echo $OUTPUT->heading($strings->heading_index);
 
 if ($records = local_cohortrole_list()) {
     $table = new flexible_table('local_cohortrole');
     $table->define_columns(array('cohort', 'role', 'edit'));
-    $table->define_headers(array(get_string('cohort', 'local_cohortrole'), get_string('role', 'local_cohortrole'), get_string('edit')));
+    $table->define_headers(array($strings->cohort, $strings->role, get_string('edit')));
     $table->define_baseurl($PAGE->url);
     $table->setup();
 
     $icon = new pix_icon('t/delete', get_string('delete'), 'core', array('class' => 'iconsmall'));
 
     foreach ($records as $record) {
-        $delete = $OUTPUT->action_icon(new moodle_url('/local/cohortrole/edit.php', array('id' => $record->id, 'delete' => 1)), $icon);
+        $action = new moodle_url('/local/cohortrole/edit.php', array('id' => $record->id, 'delete' => 1));
 
-        $table->add_data(array($record->name, $record->role, $delete));
+        $table->add_data(array($record->name, $record->role, $OUTPUT->action_icon($action, $icon)));
     }
 
     $table->print_html();
@@ -52,6 +54,7 @@ if ($records = local_cohortrole_list()) {
     echo $OUTPUT->notification(get_string('nothingtodisplay'));
 }
 
-echo $OUTPUT->single_button(new moodle_url('/local/cohortrole/edit.php'), get_string('add'), 'get', array('class' => 'continuebutton'));
+$stradd = get_string('add');
+echo $OUTPUT->single_button(new moodle_url('/local/cohortrole/edit.php'), $stradd, 'get', array('class' => 'continuebutton'));
 
 echo $OUTPUT->footer();
