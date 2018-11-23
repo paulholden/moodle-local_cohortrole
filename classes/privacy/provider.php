@@ -16,20 +16,24 @@
 
 /**
  * @package    local_cohortrole
- * @copyright  2013 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_cohortrole\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$string['cohort'] = 'Cohort';
-$string['cohort_help'] = 'List of cohorts that exist in the system context';
-$string['deleteconfirm'] = 'Are you sure you want to delete this synchronization?';
-$string['errorexists'] = 'Synchronization already defined';
-$string['heading_add'] = 'Define new synchronization';
-$string['heading_delete'] = 'Delete defined synchronization';
-$string['heading_index'] = 'Currently defined synchronization';
-$string['pluginname'] = 'Cohort role synchronization';
-$string['privacy:metadata'] = 'The Cohort role synchronization plugin does not store any personal data';
-$string['role'] = 'Role';
-$string['role_help'] = 'List of assignable roles in the system context';
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    use \core_privacy\local\legacy_polyfill;
+
+    /**
+     * Return language string identifier to explain why this plugin stores no data
+     *
+     * @return string
+     */
+    public static function _get_reason() {
+        return 'privacy:metadata';
+    }
+}
