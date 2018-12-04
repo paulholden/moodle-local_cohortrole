@@ -37,15 +37,16 @@ if ($id) {
 }
 
 $editurl   = new moodle_url('/local/cohortrole/edit.php');
-$returnurl = new moodle_url('/local/cohortrole/index.php');
+$returnurl = clone($PAGE->url);
 
-if ($delete and $definition->id) {
+if ($delete and isset($definition)) {
     if ($confirm and confirm_sesskey()) {
         local_cohortrole_unsynchronize($definition->cohortid, $definition->roleid);
 
         $DB->delete_records('local_cohortrole', array('id' => $definition->id));
 
-        redirect($returnurl);
+        redirect($returnurl, get_string('notificationdeleted', 'local_cohortrole'), null,
+            \core\output\notification::NOTIFY_SUCCESS);
     }
 
     $PAGE->navbar->add(get_string('delete'));
@@ -75,7 +76,8 @@ if ($mform->is_cancelled()) {
 
     local_cohortrole_synchronize($record->cohortid, $record->roleid);
 
-    redirect($returnurl);
+    redirect($returnurl, get_string('notificationcreated', 'local_cohortrole'), null,
+        \core\output\notification::NOTIFY_SUCCESS);
 }
 
 $PAGE->navbar->add(get_string('add'));
