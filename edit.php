@@ -24,16 +24,15 @@ require(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
 
-$id       = optional_param('id', 0, PARAM_INT);
-$delete   = optional_param('delete', 0, PARAM_BOOL);
+$delete   = optional_param('delete', 0, PARAM_INT);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
 require_login();
 admin_externalpage_setup('local_cohortrole');
 require_capability('moodle/role:assign', context_system::instance());
 
-if ($id) {
-    $definition = $DB->get_record('local_cohortrole', array('id' => $id), '*', MUST_EXIST);
+if ($delete) {
+    $definition = $DB->get_record('local_cohortrole', ['id' => $delete], '*', MUST_EXIST);
 }
 
 $editurl   = new moodle_url('/local/cohortrole/edit.php');
@@ -43,7 +42,7 @@ if ($delete and isset($definition)) {
     if ($confirm and confirm_sesskey()) {
         local_cohortrole_unsynchronize($definition->cohortid, $definition->roleid);
 
-        $DB->delete_records('local_cohortrole', array('id' => $definition->id));
+        $DB->delete_records('local_cohortrole', ['id' => $definition->id]);
 
         redirect($returnurl, get_string('notificationdeleted', 'local_cohortrole'), null,
             \core\output\notification::NOTIFY_SUCCESS);
@@ -54,7 +53,7 @@ if ($delete and isset($definition)) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('heading_delete', 'local_cohortrole'));
 
-    $editurl->params(array('id' => $definition->id, 'delete' => 1, 'confirm' => 1));
+    $editurl->params(['delete' => $definition->id, 'confirm' => 1]);
 
     echo $OUTPUT->confirm(get_string('deleteconfirm', 'local_cohortrole'), $editurl, $returnurl);
     echo $OUTPUT->footer();

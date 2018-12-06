@@ -109,7 +109,7 @@ class summary_table extends \table_sql implements \renderable {
     public function col_edit(\stdClass $record) {
         global $OUTPUT;
 
-        $action = new \moodle_url('/local/cohortrole/edit.php', ['id' => $record->id, 'delete' => 1]);
+        $action = new \moodle_url('/local/cohortrole/edit.php', ['delete' => $record->id]);
 
         return $OUTPUT->action_icon($action, new \pix_icon('t/delete', get_string('delete'), 'moodle'));
     }
