@@ -22,13 +22,13 @@ Feature: An admin can configure Cohort role synchronizations
       | Role | Super Role |
     And I click on "Save changes" "button"
     Then I should see "Created new synchronization"
-    And the following should exist in the "flexible" table:
+    And the following should exist in the "local-cohortrole-summary-table" table:
       | Cohort | Role |
       | Cohort One | Super Role |
-    And I click on "Delete" "link" in the "flexible" "table"
+    And I click on "Delete" "link" in the "local-cohortrole-summary-table" "table"
     And I should see "Are you sure you want to delete this synchronization?"
     And I click on "Continue" "button"
     And I should see "Deleted synchronization"
-    And the following should not exist in the "flexible" table:
+    And the following should not exist in the "local-cohortrole-summary-table" table:
       | Cohort | Role |
       | Cohort One | Super Role |

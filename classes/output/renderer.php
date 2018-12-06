@@ -16,14 +16,33 @@
 
 /**
  * @package    local_cohortrole
- * @copyright  2013 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_cohortrole\output;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_cohortrole';
-$plugin->release   = '2.0';
-$plugin->version   = 2018120600;
-$plugin->requires  = 2017051500; // Moodle 3.3 onwards.
-$plugin->maturity  = MATURITY_STABLE;
+class renderer extends \plugin_renderer_base {
+
+    /** @var int Page size for displaying summary table. */
+    const SUMMARY_TABLE_PAGESIZE = 20;
+
+    /**
+     * Return output to be rendered to page
+     *
+     * @param summary_table $table
+     * @return string HTML rendered table
+     */
+    protected function render_summary_table(summary_table $table) {
+        ob_start();
+
+        $table->out(self::SUMMARY_TABLE_PAGESIZE, false);
+        $output = ob_get_contents();
+
+        ob_end_clean();
+
+        return $output;
+    }
+}
