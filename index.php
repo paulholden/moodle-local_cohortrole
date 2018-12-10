@@ -20,12 +20,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-require_login();
 admin_externalpage_setup('local_cohortrole');
-require_capability('moodle/role:assign', context_system::instance());
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('heading_index', 'local_cohortrole'));

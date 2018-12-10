@@ -20,25 +20,21 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
 
 $delete   = optional_param('delete', 0, PARAM_INT);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
-require_login();
 admin_externalpage_setup('local_cohortrole');
-require_capability('moodle/role:assign', context_system::instance());
-
-if ($delete) {
-    $definition = $DB->get_record('local_cohortrole', ['id' => $delete], '*', MUST_EXIST);
-}
 
 $editurl   = new moodle_url('/local/cohortrole/edit.php');
 $returnurl = clone($PAGE->url);
 
-if ($delete and isset($definition)) {
+if ($delete) {
+    $definition = $DB->get_record('local_cohortrole', ['id' => $delete], '*', MUST_EXIST);
+
     if ($confirm and confirm_sesskey()) {
         local_cohortrole_unsynchronize($definition->cohortid, $definition->roleid);
 
