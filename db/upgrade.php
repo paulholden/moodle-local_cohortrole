@@ -22,6 +22,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Upgrade code for the plugin XMLDB
+ *
+ * @param int $oldversion
+ * @return bool
+ */
 function xmldb_local_cohortrole_upgrade($oldversion) {
     global $DB;
 
@@ -78,6 +84,39 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
 
         // Cohortrole savepoint reached.
         upgrade_plugin_savepoint(true, 2014103102, 'local', 'cohortrole');
+    }
+
+    if ($oldversion < 2018121000) {
+        $table = new xmldb_table('local_cohortrole');
+
+        // Define key fk_user (foreign) to be dropped from local_cohortrole.
+        $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $dbman->drop_key($table, $key);
+
+        // Rename field userid on table local_cohortrole to usermodified.
+        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'roleid');
+        $dbman->rename_field($table, $field, 'usermodified');
+
+        // Define key fk_user (foreign) to be added to local_cohortrole.
+        $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Cohortrole savepoint reached.
+        upgrade_plugin_savepoint(true, 2018121000, 'local', 'cohortrole');
+    }
+
+    if ($oldversion < 2018121001) {
+        // Define field timemodified to be added to local_cohortrole.
+        $table = new xmldb_table('local_cohortrole');
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'timecreated');
+
+        // Conditionally launch add field timemodified.
+        if (! $dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Cohortrole savepoint reached.
+        upgrade_plugin_savepoint(true, 2018121001, 'local', 'cohortrole');
     }
 
     return true;

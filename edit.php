@@ -33,12 +33,12 @@ $editurl   = new moodle_url('/local/cohortrole/edit.php');
 $returnurl = clone($PAGE->url);
 
 if ($delete) {
-    $definition = $DB->get_record('local_cohortrole', ['id' => $delete], '*', MUST_EXIST);
+    $persistent = new \local_cohortrole\persistent($delete);
 
     if ($confirm and confirm_sesskey()) {
-        local_cohortrole_unsynchronize($definition->cohortid, $definition->roleid);
+        local_cohortrole_unsynchronize($persistent->get('cohortid'), $persistent->get('roleid'));
 
-        $DB->delete_records('local_cohortrole', ['id' => $definition->id]);
+        $persistent->delete();
 
         redirect($returnurl, get_string('notificationdeleted', 'local_cohortrole'), null,
             \core\output\notification::NOTIFY_SUCCESS);
@@ -49,7 +49,7 @@ if ($delete) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('heading_delete', 'local_cohortrole'));
 
-    $editurl->params(['delete' => $definition->id, 'confirm' => 1]);
+    $editurl->params(['delete' => $persistent->get('id'), 'confirm' => 1]);
 
     echo $OUTPUT->confirm(get_string('deleteconfirm', 'local_cohortrole'), $editurl, $returnurl);
     echo $OUTPUT->footer();
@@ -61,15 +61,10 @@ $mform = new \local_cohortrole\form\edit($editurl);
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $mform->get_data()) {
-    $record = new stdClass;
-    $record->cohortid = $data->cohortid;
-    $record->roleid = $data->roleid;
-    $record->userid = $USER->id;
-    $record->timecreated = time();
+    $persistent = new \local_cohortrole\persistent(0, (object) ['cohortid' => $data->cohortid, 'roleid' => $data->roleid]);
+    $persistent->create();
 
-    $DB->insert_record('local_cohortrole', $record);
-
-    local_cohortrole_synchronize($record->cohortid, $record->roleid);
+    local_cohortrole_synchronize($persistent->get('cohortid'), $persistent->get('roleid'));
 
     redirect($returnurl, get_string('notificationcreated', 'local_cohortrole'), null,
         \core\output\notification::NOTIFY_SUCCESS);
