@@ -14,10 +14,12 @@ Feature: An admin can configure Cohort role synchronizations
 
   @javascript
   Scenario: Configure Cohort role synchronizations
-    Given I log in as "admin"
+    When I log in as "admin"
     And I navigate to "Users > Accounts > Cohort role synchronization" in site administration
+
+    # Add new definition.
     And I press "Add"
-    When I set the following fields to these values:
+    And I set the following fields to these values:
       | Cohort | Cohort One |
       | Role | Super Role |
     And I click on "Save changes" "button"
@@ -25,10 +27,21 @@ Feature: An admin can configure Cohort role synchronizations
     And the following should exist in the "local-cohortrole-summary-table" table:
       | Cohort | Role |
       | Cohort One | Super Role |
+
+    # Try to re-add same definition.
+    And I press "Add"
+    And I set the following fields to these values:
+      | Cohort | Cohort One |
+      | Role | Super Role |
+    And I click on "Save changes" "button"
+    Then I should see "Synchronization already defined"
+    And I click on "Cancel" "button"
+
+    # Delete it.
     And I click on "Delete" "link" in the "local-cohortrole-summary-table" "table"
     And I should see "Are you sure you want to delete this synchronization?"
     And I click on "Continue" "button"
-    And I should see "Deleted synchronization"
+    Then I should see "Deleted synchronization"
     And the following should not exist in the "local-cohortrole-summary-table" table:
       | Cohort | Role |
       | Cohort One | Super Role |

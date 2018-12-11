@@ -56,12 +56,12 @@ if ($delete) {
     die;
 }
 
-$mform = new \local_cohortrole\form\edit($editurl);
+$mform = new \local_cohortrole\form\edit($editurl, ['persistent' => null]);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $mform->get_data()) {
-    $persistent = new \local_cohortrole\persistent(0, (object) ['cohortid' => $data->cohortid, 'roleid' => $data->roleid]);
+    $persistent = new \local_cohortrole\persistent(0, $data);
     $persistent->create();
 
     local_cohortrole_synchronize($persistent->get('cohortid'), $persistent->get('roleid'));

@@ -24,11 +24,12 @@ namespace local_cohortrole\form;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/cohort/lib.php');
-require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
 
-class edit extends \moodleform {
+class edit extends \core\form\persistent {
+
+    /** @var string Persistent class name. */
+    protected static $persistentclass = '\\local_cohortrole\\persistent';
 
     /**
      * Form definition
@@ -38,12 +39,12 @@ class edit extends \moodleform {
     protected function definition() {
         $mform = $this->_form;
 
-        $mform->addElement('select', 'cohortid', get_string('cohort', 'local_cohortrole'), $this->system_cohorts());
+        $mform->addElement('select', 'cohortid', get_string('cohort', 'local_cohortrole'), self::get_cohorts());
         $mform->addRule('cohortid', get_string('required'), 'required', null, 'client');
         $mform->setType('cohortid', PARAM_INT);
         $mform->addHelpButton('cohortid', 'cohort', 'local_cohortrole');
 
-        $mform->addElement('select', 'roleid', get_string('role', 'local_cohortrole'), $this->system_roles());
+        $mform->addElement('select', 'roleid', get_string('role', 'local_cohortrole'), self::get_roles());
         $mform->addRule('roleid', get_string('required'), 'required', null, 'client');
         $mform->setType('roleid', PARAM_INT);
         $mform->addHelpButton('roleid', 'role', 'local_cohortrole');
@@ -54,14 +55,15 @@ class edit extends \moodleform {
     /**
      * Form validation
      *
-     * @param array $data
+     * @param stdClass $data
      * @param array $files
+     * @param array $errors
      * @return array
      */
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
+    public function extra_validation($data, $files, array &$errors) {
+        if ($this->get_persistent()->record_exists_select('cohortid = :cohortid AND roleid = :roleid',
+                ['cohortid' => $data->cohortid, 'roleid' => $data->roleid])) {
 
-        if (local_cohortrole_exists($data['cohortid'], $data['roleid'])) {
             $errors['cohortid'] = get_string('errorexists', 'local_cohortrole');
         }
 
@@ -71,9 +73,9 @@ class edit extends \moodleform {
     /**
      * Get cohorts that are defined in the system context
      *
-     * @return array an associative array (id => name)
+     * @return array
      */
-    private function system_cohorts() {
+    protected static function get_cohorts() {
         $cohorts = cohort_get_cohorts(\context_system::instance()->id, null, null);
 
         $result = array();
@@ -87,9 +89,9 @@ class edit extends \moodleform {
     /**
      * Get roles that are assignable in the system context
      *
-     * @return array an associative array (id => name)
+     * @return array
      */
-    private function system_roles() {
+    protected static function get_roles() {
         $roles = get_assignable_roles(\context_system::instance(), ROLENAME_ALIAS);
 
         \core_collator::asort($roles, \core_collator::SORT_STRING);
