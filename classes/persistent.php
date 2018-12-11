@@ -78,4 +78,26 @@ class persistent extends \core\persistent {
 
         return true;
     }
+
+    /**
+     * Returns the model cohort object
+     *
+     * @return stdClass
+     */
+    public function get_cohort() {
+        global $DB;
+
+        return $DB->get_record('cohort', ['id' => $this->get('cohortid')], '*', MUST_EXIST);
+    }
+
+    /**
+     * Returns the role object
+     *
+     * @return stdClass
+     */
+    public function get_role() {
+        global $DB;
+
+        return $DB->get_record('role', ['id' => $this->get('roleid')], '*', MUST_EXIST);
+    }
 }

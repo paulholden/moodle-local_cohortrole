@@ -47,7 +47,7 @@ class summary_table extends \table_sql implements \renderable {
 
         // Table configuration.
         $this->set_attribute('cellspacing', '0');
-        $this->set_attribute('class', 'generaltable generalbox local-cohortrole-summary-table');
+        $this->set_attribute('class', $this->attributes['class'] .' local-cohortrole-summary-table');
 
         $this->sortable(true, 'timecreated', SORT_DESC);
         $this->no_sorting('edit');
@@ -65,13 +65,22 @@ class summary_table extends \table_sql implements \renderable {
      * @return void
      */
     protected function init_sql() {
-        global $DB;
+        $from = '{' . \local_cohortrole\persistent::TABLE . '}';
 
-        $fields = 'cr.id, cr.timecreated, cr.roleid, c.name AS cohort, r.shortname AS role';
-        $from = '{local_cohortrole} cr JOIN {cohort} c ON c.id = cr.cohortid JOIN {role} r ON r.id = cr.roleid';
-
-        $this->set_sql($fields, $from, '1=1');
+        $this->set_sql('*', $from, '1=1');
         $this->set_count_sql('SELECT COUNT(1) FROM ' . $from);
+    }
+
+    /**
+     * Format record cohort column
+     *
+     * @param stdClass $record
+     * @return string
+     */
+    public function col_cohort(\stdClass $record) {
+        $persistent = (new \local_cohortrole\persistent())->from_record($record);
+
+        return format_string($persistent->get_cohort()->name, true, \context_system::instance());
     }
 
     /**
@@ -81,11 +90,9 @@ class summary_table extends \table_sql implements \renderable {
      * @return string
      */
     public function col_role(\stdClass $record) {
-        global $DB;
+        $persistent = (new \local_cohortrole\persistent())->from_record($record);
 
-        $role = $DB->get_record('role', ['id' => $record->roleid], '*', MUST_EXIST);
-
-        return role_get_name($role, \context_system::instance(), ROLENAME_ALIAS);
+        return role_get_name($persistent->get_role(), \context_system::instance(), ROLENAME_ALIAS);
     }
 
     /**
