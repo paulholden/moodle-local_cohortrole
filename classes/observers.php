@@ -35,15 +35,16 @@ class observers {
      * @return void
      */
     public static function cohort_deleted(\core\event\cohort_deleted $event) {
-        global $DB;
-
         if ($event->contextlevel == CONTEXT_SYSTEM) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            if (local_cohortrole_exists($cohort->id)) {
+            $instances = persistent::get_records_select('cohortid = ?', [$cohort->id]);
+            if (count($instances) > 0) {
                 local_cohortrole_unsynchronize($cohort->id);
 
-                $DB->delete_records('local_cohortrole', array('cohortid' => $cohort->id));
+                foreach ($instances as $instance) {
+                    $instance->delete();
+                }
             }
         }
     }
@@ -58,7 +59,7 @@ class observers {
         if ($event->contextlevel == CONTEXT_SYSTEM) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            if (local_cohortrole_exists($cohort->id)) {
+            if (persistent::record_exists_select('cohortid = ?', [$cohort->id])) {
                 $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
                 $roleids = local_cohortrole_get_cohort_roles($cohort->id);
@@ -79,7 +80,7 @@ class observers {
         if ($event->contextlevel == CONTEXT_SYSTEM) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            if (local_cohortrole_exists($cohort->id)) {
+            if (persistent::record_exists_select('cohortid = ?', [$cohort->id])) {
                 $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
                 $roleids = local_cohortrole_get_cohort_roles($cohort->id);
@@ -97,12 +98,13 @@ class observers {
      * @return void
      */
     public static function role_deleted(\core\event\role_deleted $event) {
-        global $DB;
-
         if ($event->contextlevel == CONTEXT_SYSTEM) {
             $role = $event->get_record_snapshot('role', $event->objectid);
 
-            $DB->delete_records('local_cohortrole', array('roleid' => $role->id));
+            $instances = persistent::get_records_select('roleid = ?', [$role->id]);
+            foreach ($instances as $instance) {
+                $instance->delete();
+            }
         }
     }
 }

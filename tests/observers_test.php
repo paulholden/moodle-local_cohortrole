@@ -71,6 +71,10 @@ class local_cohortrole_observers_testcase extends advanced_testcase {
         // User should not be assigned to the test role.
         $userhasrole = user_has_role_assignment($user->id, $this->persistent->get('roleid'), $context->id);
         $this->assertFalse($userhasrole);
+
+        // Ensure plugin tables are cleaned up.
+        $exists = $this->persistent->record_exists_select('cohortid = ?', [$this->persistent->get('cohortid')]);
+        $this->assertFalse($exists);
     }
 
     /**
