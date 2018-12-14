@@ -16,14 +16,23 @@
 
 /**
  * @package    local_cohortrole
- * @copyright  2013 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_cohortrole';
-$plugin->release   = '2.0';
-$plugin->version   = 2018121100;
-$plugin->requires  = 2017051500; // Moodle 3.3 onwards.
-$plugin->maturity  = MATURITY_STABLE;
+class local_cohortrole_generator extends component_generator_base {
+
+    /**
+     * Create new persistent instance
+     *
+     * @param array|stdClass $record
+     * @return \local_cohortrole\persistent
+     */
+    public function create_persistent($record = null) {
+        $persistent = new \local_cohortrole\persistent(0, (object) $record);
+
+        return $persistent->create();
+    }
+}
