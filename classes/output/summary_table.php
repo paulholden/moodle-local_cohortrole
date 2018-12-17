@@ -24,6 +24,8 @@ namespace local_cohortrole\output;
 
 defined('MOODLE_INTERNAL') || die();
 
+use \local_cohortrole\persistent;
+
 require_once($CFG->libdir . '/tablelib.php');
 
 class summary_table extends \table_sql implements \renderable {
@@ -65,7 +67,7 @@ class summary_table extends \table_sql implements \renderable {
      * @return void
      */
     protected function init_sql() {
-        $from = '{' . \local_cohortrole\persistent::TABLE . '}';
+        $from = '{' . persistent::TABLE . '}';
 
         $this->set_sql('*', $from, '1=1');
         $this->set_count_sql('SELECT COUNT(1) FROM ' . $from);
@@ -78,7 +80,7 @@ class summary_table extends \table_sql implements \renderable {
      * @return string
      */
     public function col_cohort(\stdClass $record) {
-        $persistent = (new \local_cohortrole\persistent())->from_record($record);
+        $persistent = (new persistent())->from_record($record);
 
         return format_string($persistent->get_cohort()->name, true, \context_system::instance());
     }
@@ -90,7 +92,7 @@ class summary_table extends \table_sql implements \renderable {
      * @return string
      */
     public function col_role(\stdClass $record) {
-        $persistent = (new \local_cohortrole\persistent())->from_record($record);
+        $persistent = (new persistent())->from_record($record);
 
         return role_get_name($persistent->get_role(), \context_system::instance(), ROLENAME_ALIAS);
     }

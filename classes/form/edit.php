@@ -24,12 +24,14 @@ namespace local_cohortrole\form;
 
 defined('MOODLE_INTERNAL') || die();
 
+use \local_cohortrole\persistent;
+
 require_once($CFG->dirroot . '/cohort/lib.php');
 
 class edit extends \core\form\persistent {
 
     /** @var string Persistent class name. */
-    protected static $persistentclass = '\\local_cohortrole\\persistent';
+    protected static $persistentclass = persistent::class;
 
     /**
      * Form definition
