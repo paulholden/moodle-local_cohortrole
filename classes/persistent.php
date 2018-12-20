@@ -24,6 +24,9 @@ namespace local_cohortrole;
 
 defined('MOODLE_INTERNAL') || die();
 
+use \local_cohortrole\event\definition_created,
+    \local_cohortrole\event\definition_deleted;
+
 class persistent extends \core\persistent {
 
     /** Table name for the persistent. */
@@ -77,6 +80,25 @@ class persistent extends \core\persistent {
         }
 
         return true;
+    }
+
+    /**
+     * Hook to execute after model is created
+     *
+     * @return void
+     */
+    protected function after_create() {
+        definition_created::create_from_persistent($this)->trigger();
+    }
+
+    /**
+     * Hook to execute after model is deleted
+     *
+     * @param bool $result
+     * @return void
+     */
+    protected function after_delete($result) {
+        definition_deleted::create_from_persistent($this)->trigger();
     }
 
     /**
