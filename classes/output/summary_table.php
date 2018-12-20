@@ -67,10 +67,37 @@ class summary_table extends \table_sql implements \renderable {
      * @return void
      */
     protected function init_sql() {
-        $from = '{' . persistent::TABLE . '}';
+        $fields = persistent::get_sql_fields('cr') . ', c.name AS cohort, r.shortname AS role';
 
-        $this->set_sql('*', $from, '1=1');
+        $from = '{' . persistent::TABLE . '} cr
+            JOIN {cohort} c ON c.id = cr.cohortid
+            JOIN {role} r ON r.id = cr.roleid';
+
+        $this->set_sql($fields, $from, '1=1');
         $this->set_count_sql('SELECT COUNT(1) FROM ' . $from);
+    }
+
+    /**
+     * Add alias to timecreated field prior to sorting
+     *
+     * @return string
+     */
+    public function get_sql_sort() {
+        $sort = parent::get_sql_sort();
+
+        return str_replace('timecreated', 'cr.timecreated', $sort);
+    }
+
+    /**
+     * Extract persistent record prior to formatting
+     *
+     * @param array|object $row
+     * @return array
+     */
+    public function format_row($row) {
+        $record = persistent::extract_record((object) $row);
+
+        return parent::format_row($record);
     }
 
     /**
@@ -80,7 +107,7 @@ class summary_table extends \table_sql implements \renderable {
      * @return string
      */
     public function col_cohort(\stdClass $record) {
-        $persistent = (new persistent())->from_record($record);
+        $persistent = new persistent(0, $record);
 
         return format_string($persistent->get_cohort()->name, true, \context_system::instance());
     }
@@ -92,7 +119,7 @@ class summary_table extends \table_sql implements \renderable {
      * @return string
      */
     public function col_role(\stdClass $record) {
-        $persistent = (new persistent())->from_record($record);
+        $persistent = new persistent(0, $record);
 
         return role_get_name($persistent->get_role(), \context_system::instance(), ROLENAME_ALIAS);
     }
