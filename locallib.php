@@ -25,24 +25,6 @@ defined('MOODLE_INTERNAL') || die();
 define('LOCAL_COHORTROLE_ROLE_COMPONENT', 'local_cohortrole');
 
 /**
- * Test whether a given cohortid+roleid has been defined
- *
- * @param integer $cohortid the id of a cohort
- * @param integer|null $roleid the id of a role, or null to just test cohort
- * @return boolean
- */
-function local_cohortrole_exists($cohortid, $roleid = null) {
-    global $DB;
-
-    $params = array('cohortid' => $cohortid);
-    if ($roleid !== null) {
-        $params['roleid'] = $roleid;
-    }
-
-    return $DB->record_exists('local_cohortrole', $params);
-}
-
-/**
  * Assign users to a role; using local role component
  *
  * @param integer $cohortid the id of a cohort
@@ -123,27 +105,4 @@ function local_cohortrole_get_cohort_roles($cohortid) {
     global $DB;
 
     return $DB->get_records_menu('local_cohortrole', array('cohortid' => $cohortid), null, 'id, roleid');
-}
-
-/**
- * Get all defined cohort+role definitions
- *
- * @return array definition records
- */
-function local_cohortrole_list() {
-    global $DB;
-
-    $rolenames = role_get_names(context_system::instance(), ROLENAME_ALIAS, true);
-
-    $records = $DB->get_records_sql('SELECT cr.id, c.id AS cohortid, c.name, r.id AS roleid
-                                       FROM {local_cohortrole} cr
-                                       JOIN {cohort} c ON c.id = cr.cohortid
-                                       JOIN {role} r ON r.id = cr.roleid
-                                   ORDER BY c.name, r.name');
-
-    foreach ($records as $record) {
-        $record->role = $rolenames[$record->roleid];
-    }
-
-    return $records;
 }

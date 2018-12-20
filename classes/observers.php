@@ -59,12 +59,12 @@ class observers {
         if ($event->contextlevel == CONTEXT_SYSTEM) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            if (persistent::record_exists_select('cohortid = ?', [$cohort->id])) {
+            $instances = persistent::get_records_select('cohortid = ?', [$cohort->id]);
+            if (count($instances) > 0) {
                 $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
-                $roleids = local_cohortrole_get_cohort_roles($cohort->id);
-                foreach ($roleids as $roleid) {
-                    local_cohortrole_role_assign($cohort->id, $roleid, array($user->id));
+                foreach ($instances as $instance) {
+                    local_cohortrole_role_assign($instance->get('cohortid'), $instance->get('roleid'), [$user->id]);
                 }
             }
         }
@@ -80,12 +80,12 @@ class observers {
         if ($event->contextlevel == CONTEXT_SYSTEM) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            if (persistent::record_exists_select('cohortid = ?', [$cohort->id])) {
+            $instances = persistent::get_records_select('cohortid = ?', [$cohort->id]);
+            if (count($instances) > 0) {
                 $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
-                $roleids = local_cohortrole_get_cohort_roles($cohort->id);
-                foreach ($roleids as $roleid) {
-                    local_cohortrole_role_unassign($cohort->id, $roleid, array($user->id));
+                foreach ($instances as $instance) {
+                    local_cohortrole_role_unassign($instance->get('cohortid'), $instance->get('roleid'), [$user->id]);
                 }
             }
         }
