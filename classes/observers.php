@@ -38,7 +38,7 @@ class observers {
         if ($event->contextlevel == CONTEXT_SYSTEM) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            $instances = persistent::get_records_select('cohortid = ?', [$cohort->id]);
+            $instances = persistent::get_records(['cohortid' => $cohort->id]);
             if (count($instances) > 0) {
                 local_cohortrole_unsynchronize($cohort->id);
 
@@ -59,7 +59,7 @@ class observers {
         if ($event->contextlevel == CONTEXT_SYSTEM) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            $instances = persistent::get_records_select('cohortid = ?', [$cohort->id]);
+            $instances = persistent::get_records(['cohortid' => $cohort->id]);
             if (count($instances) > 0) {
                 $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
@@ -80,7 +80,7 @@ class observers {
         if ($event->contextlevel == CONTEXT_SYSTEM) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
-            $instances = persistent::get_records_select('cohortid = ?', [$cohort->id]);
+            $instances = persistent::get_records(['cohortid' => $cohort->id]);
             if (count($instances) > 0) {
                 $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
@@ -101,7 +101,7 @@ class observers {
         if ($event->contextlevel == CONTEXT_SYSTEM) {
             $role = $event->get_record_snapshot('role', $event->objectid);
 
-            $instances = persistent::get_records_select('roleid = ?', [$role->id]);
+            $instances = persistent::get_records(['roleid' => $role->id]);
             foreach ($instances as $instance) {
                 $instance->delete();
             }
