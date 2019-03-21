@@ -22,6 +22,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use \local_cohortrole\persistent;
+
 class local_cohortrole_generator extends component_generator_base {
 
     /**
@@ -31,8 +33,6 @@ class local_cohortrole_generator extends component_generator_base {
      * @return \local_cohortrole\persistent
      */
     public function create_persistent($record = null) {
-        $persistent = new \local_cohortrole\persistent(0, (object) $record);
-
-        return $persistent->create();
+        return (new persistent(0, (object) $record))->create();
     }
 }

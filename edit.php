@@ -24,6 +24,8 @@ require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
 
+use \local_cohortrole\persistent;
+
 $delete   = optional_param('delete', 0, PARAM_INT);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
@@ -33,7 +35,7 @@ $editurl   = new moodle_url('/local/cohortrole/edit.php');
 $returnurl = clone($PAGE->url);
 
 if ($delete) {
-    $persistent = new \local_cohortrole\persistent($delete);
+    $persistent = new persistent($delete);
 
     if ($confirm and confirm_sesskey()) {
         local_cohortrole_unsynchronize($persistent->get('cohortid'), $persistent->get('roleid'));
@@ -61,8 +63,7 @@ $mform = new \local_cohortrole\form\edit($editurl, ['persistent' => null]);
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $mform->get_data()) {
-    $persistent = new \local_cohortrole\persistent(0, $data);
-    $persistent->create();
+    $persistent = (new persistent(0, $data))->create();
 
     local_cohortrole_synchronize($persistent->get('cohortid'), $persistent->get('roleid'));
 
