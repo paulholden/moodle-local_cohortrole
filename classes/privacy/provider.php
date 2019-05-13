@@ -22,18 +22,37 @@
 
 namespace local_cohortrole\privacy;
 
+use core_privacy\local\metadata\collection;
+
 defined('MOODLE_INTERNAL') || die();
 
-class provider implements \core_privacy\local\metadata\null_provider {
+class provider implements \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\data_provider
+{
 
-    use \core_privacy\local\legacy_polyfill;
 
     /**
-     * Return language string identifier to explain why this plugin stores no data
+     * Return the fields which contain personal data.
      *
-     * @return string
+     * @param collection $collection a reference to the collection to use to store the metadata.
+     * @return collection the updated collection of metadata items.
      */
-    public static function _get_reason() {
-        return 'privacy:metadata';
+    public static function get_metadata(collection $collection): collection
+    {
+        $collection->add_database_table(
+            'local_cohortrole',
+            [
+                'id' => 'privacy:metadata:cohortrole:id',
+                'cohortid' => 'privacy:metadata:cohortrole:cohortid',
+                'roleid' => 'privacy:metadata:cohortrole:roleid',
+                'usermodified' => 'privacy:metadata:cohortrole:usermodified',
+                'timecreated' => 'privacy:metadata:cohortrole:timecreated',
+                'timemodified' => 'privacy:metadata:cohortrole:timemodified'
+            ],
+            'privacy:metadata:cohortrole'
+        );
+
+        return $collection;
     }
+
 }

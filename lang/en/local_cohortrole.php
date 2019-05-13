@@ -34,6 +34,15 @@ $string['heading_index'] = 'Currently defined synchronization';
 $string['notificationcreated'] = 'Created new synchronization';
 $string['notificationdeleted'] = 'Deleted synchronization';
 $string['pluginname'] = 'Cohort role synchronization';
-$string['privacy:metadata'] = 'The Cohort role synchronization plugin does not store any personal data';
 $string['role'] = 'Role';
 $string['role_help'] = 'List of assignable roles in the system context';
+/**
+ * GDPR Complience
+ */
+$string['privacy:metadata:cohortrole'] = 'The cohort role plugin stores the userid of the modified user';
+$string['privacy:metadata:cohortrole:id'] = 'The Cohort role ID';
+$string['privacy:metadata:cohortrole:cohortid'] = 'The ID of the Cohort';
+$string['privacy:metadata:cohortrole:roleid'] = 'The role id';
+$string['privacy:metadata:cohortrole:usermodified'] = 'The userid of the modified user';
+$string['privacy:metadata:cohortrole:timecreated'] = 'The timestamp of the created time';
+$string['privacy:metadata:cohortrole:timemodified'] = 'The timestamp of the modified time';
