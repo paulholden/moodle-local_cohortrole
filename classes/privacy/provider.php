@@ -24,16 +24,99 @@ namespace local_cohortrole\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-class provider implements \core_privacy\local\metadata\null_provider {
+use \core_privacy\local\metadata\collection,
+    \core_privacy\local\request\contextlist,
+    \core_privacy\local\request\approved_contextlist,
+    \core_privacy\local\request\transform,
+    \core_privacy\local\request\writer,
+    \local_cohortrole\persistent;
+
+class provider implements
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\plugin\provider {
 
     use \core_privacy\local\legacy_polyfill;
 
     /**
-     * Return language string identifier to explain why this plugin stores no data
+     * Returns meta data about this system.
      *
-     * @return string
+     * @param collection $collection The initialised collection to add items to.
+     * @return collection A listing of user data stored through this system.
      */
-    public static function _get_reason() {
-        return 'privacy:metadata';
+    public static function _get_metadata(collection $collection) {
+        $collection->add_database_table('local_cohortrole', [
+            'cohortid' => 'privacy:metadata:cohortrole:cohortid',
+            'roleid' => 'privacy:metadata:cohortrole:roleid',
+            'usermodified' => 'privacy:metadata:cohortrole:usermodified',
+            'timecreated' => 'privacy:metadata:cohortrole:timecreated',
+
+        ], 'privacy:metadata:cohortrole');
+
+        return $collection;
+    }
+
+    /**
+     * Get the list of contexts that contain user information for the specified user.
+     *
+     * @param int $userid The user to search.
+     * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
+     */
+    public static function _get_contexts_for_userid($userid) {
+        $contextlist = new contextlist();
+
+        if (persistent::record_exists_select('usermodified = ?', [$userid])) {
+            $contextlist->add_system_context();
+        }
+
+        return $contextlist;
+    }
+
+    /**
+     * Export all user data for the specified user, in the specified contexts.
+     *
+     * @param approved_contextlist $contextlist The approved contexts to export information for.
+     * @return void
+     */
+    public static function _export_user_data(approved_contextlist $contextlist) {
+        if ($contextlist->count() == 0) {
+            return;
+        }
+
+        $context = \context_system::instance();
+
+        // Export user created definitions.
+        $data = [];
+
+        $instances = persistent::get_records(['usermodified' => $contextlist->get_user()->id]);
+        foreach ($instances as $instance) {
+            $data[] = (object) [
+                'cohort' => $instance->get_cohort()->name,
+                'role' => role_get_name($instance->get_role(), $context, ROLENAME_ALIAS),
+                'timecreated' => transform::datetime($instance->get('timecreated')),
+            ];
+        }
+
+        $contextpath = [get_string('pluginname', 'local_cohortrole')];
+        writer::with_context($context)->export_related_data($contextpath, 'data', $data);
+    }
+
+    /**
+     * Delete all user data in the specified context.
+     *
+     * @param context $context
+     * @return void
+     */
+    public static function _delete_data_for_all_users_in_context(\context $context) {
+
+    }
+
+    /**
+     * Delete all user data for the specified user, in the specified contexts.
+     *
+     * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
+     * @return void
+     */
+    public static function _delete_data_for_user(approved_contextlist $contextlist) {
+
     }
 }
