@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Moodle 3.3 (build 2017051500) or later.
+- Moodle 3.5.3 or later.
 
 ## Installation
 
@@ -22,7 +22,7 @@ Once installed, you should see a new option in the Administration Block:
 
 ## Author
 
-Paul Holden (pholden@greenhead.ac.uk)
+Paul Holden (paulh@moodle.com)
 
 - Updates: https://moodle.org/plugins/view.php?plugin=local_cohortrole
 - Latest code: https://github.com/paulholden/moodle-local_cohortrole
