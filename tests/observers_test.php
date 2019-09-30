@@ -28,11 +28,16 @@ require_once($CFG->dirroot . '/cohort/lib.php');
 /**
  * Unit tests for event observers
  *
- * @group local_cohortrole
+ * @package    local_cohortrole
+ * @group      local_cohortrole
+ * @covers     \local_cohortrole\observers
+ * @covers     \local_cohortrole\persistent
+ * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_cohortrole_observers_testcase extends advanced_testcase {
 
-    /** @var \local_cohortrole\persistent test persistent instance. */
+    /** @var \local_cohortrole\persistent $persistent. */
     protected $persistent;
 
     /**

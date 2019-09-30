@@ -22,21 +22,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\request\approved_contextlist,
-    \core_privacy\local\request\writer,
-    \local_cohortrole\privacy\provider;
+use core_privacy\local\request\writer;
+use core_privacy\tests\provider_testcase;
+use local_cohortrole\privacy\provider;
 
 /**
  * Unit tests for Privacy API
  *
- * @group local_cohortrole
+ * @package    local_cohortrole
+ * @group      local_cohortrole
+ * @covers     \local_cohortrole\privacy\provider
+ * @covers     \local_cohortrole\persistent
+ * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_cohortrole_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class local_cohortrole_privacy_testcase extends provider_testcase {
 
-    /** @var stdClass test user. */
+    /** @var stdClass $user. */
     protected $user;
 
-    /** @var \local_cohortrole\persistent test persistent instance. */
+    /** @var \local_cohortrole\persistent $persistent. */
     protected $persistent;
 
     /**
@@ -93,12 +98,9 @@ class local_cohortrole_privacy_testcase extends \core_privacy\tests\provider_tes
      * @return void
      */
     public function test_export_user_data() {
-        $contextlist = provider::get_contexts_for_userid($this->user->id);
-        $approvedcontextlist = new approved_contextlist($this->user, 'local_cohortrole', $contextlist->get_contextids());
+        $context = context_system::instance();
+        $this->export_context_data_for_user($this->user->id, $context, 'local_cohortrole');
 
-        provider::export_user_data($approvedcontextlist);
-
-        list($context) = $approvedcontextlist->get_contexts();
         $contextpath = [get_string('pluginname', 'local_cohortrole')];
 
         $writer = writer::with_context($context);
