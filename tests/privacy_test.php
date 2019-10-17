@@ -22,6 +22,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
 use local_cohortrole\privacy\provider;
@@ -90,6 +91,21 @@ class local_cohortrole_privacy_testcase extends provider_testcase {
 
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertEmpty($contextlist);
+    }
+
+    /**
+     * Tests provider get_users_in_context method
+     *
+     * @return void
+     */
+    public function test_get_users_in_context() {
+        $context = context_system::instance();
+
+        $userlist = new userlist($context, 'local_cohortrole');
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(1, $userlist);
+        $this->assertEquals([$this->user->id], $userlist->get_userids());
     }
 
     /**

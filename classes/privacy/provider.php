@@ -24,18 +24,19 @@ namespace local_cohortrole\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\metadata\collection,
-    \core_privacy\local\request\contextlist,
-    \core_privacy\local\request\approved_contextlist,
-    \core_privacy\local\request\transform,
-    \core_privacy\local\request\writer,
-    \local_cohortrole\persistent;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\writer;
+use local_cohortrole\persistent;
 
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\plugin\provider {
-
-    use \core_privacy\local\legacy_polyfill;
 
     /**
      * Returns meta data about this system.
@@ -43,7 +44,7 @@ class provider implements
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function _get_metadata(collection $collection) {
+    public static function get_metadata(collection $collection) : collection {
         $collection->add_database_table('local_cohortrole', [
             'cohortid' => 'privacy:metadata:cohortrole:cohortid',
             'roleid' => 'privacy:metadata:cohortrole:roleid',
@@ -59,9 +60,9 @@ class provider implements
      * Get the list of contexts that contain user information for the specified user.
      *
      * @param int $userid The user to search.
-     * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
+     * @return contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function _get_contexts_for_userid($userid) {
+    public static function get_contexts_for_userid(int $userid) : contextlist {
         $contextlist = new contextlist();
 
         if (persistent::record_exists_select('usermodified = ?', [$userid])) {
@@ -72,12 +73,31 @@ class provider implements
     }
 
     /**
+     * Get the list of users who have data within a context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     * @return void
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (! $context instanceof \context_system) {
+            return;
+        }
+
+        $instances = persistent::get_records_select(null, null, null, 'DISTINCT usermodified');
+        foreach ($instances as $instance) {
+            $userlist->add_user($instance->get('usermodified'));
+        }
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts to export information for.
      * @return void
      */
-    public static function _export_user_data(approved_contextlist $contextlist) {
+    public static function export_user_data(approved_contextlist $contextlist) {
         if ($contextlist->count() == 0) {
             return;
         }
@@ -106,7 +126,17 @@ class provider implements
      * @param context $context
      * @return void
      */
-    public static function _delete_data_for_all_users_in_context(\context $context) {
+    public static function delete_data_for_all_users_in_context(\context $context) {
+
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     * @return void
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
 
     }
 
@@ -116,7 +146,7 @@ class provider implements
      * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
      * @return void
      */
-    public static function _delete_data_for_user(approved_contextlist $contextlist) {
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
 
     }
 }
