@@ -6,9 +6,9 @@
 
 ## Installation
 
-Copy the cohortrole folder into your Moodle /local directory and visit your Admin Notification page to complete the installation.
+Copy the cohortrole folder into your Moodle /local directory and visit your admin notification page to complete the installation.
 
-Once installed, you should see a new option in the Administration Block:
+Once installed, you should see a new option in your site administration:
 
 > Users -> Accounts -> Cohort role synchronization
 
