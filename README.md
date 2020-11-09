@@ -1,4 +1,4 @@
-# Cohort role synchronization [![Build Status](https://travis-ci.org/paulholden/moodle-local_cohortrole.svg?branch=master)](https://travis-ci.org/paulholden/moodle-local_cohortrole)
+# Cohort role synchronization [![Build Status](https://travis-ci.com/paulholden/moodle-local_cohortrole.svg?branch=master)](https://travis-ci.com/paulholden/moodle-local_cohortrole)
 
 ## Requirements
 

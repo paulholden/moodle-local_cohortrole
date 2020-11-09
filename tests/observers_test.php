@@ -20,11 +20,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/cohort/lib.php');
-
 /**
  * Unit tests for event observers
  *
@@ -41,11 +36,18 @@ class local_cohortrole_observers_testcase extends advanced_testcase {
     protected $persistent;
 
     /**
-     * Test setup
-     *
-     * @return void
+     * Load required test libraries
      */
-    protected function setUp() {
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        require_once("{$CFG->dirroot}/cohort/lib.php");
+    }
+
+    /**
+     * Test setup
+     */
+    protected function setUp(): void {
         $this->resetAfterTest(true);
 
         // Create test role/cohort.
