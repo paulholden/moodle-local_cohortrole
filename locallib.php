@@ -36,7 +36,13 @@ function local_cohortrole_role_assign($cohortid, $roleid, array $userids) {
     $context = context_system::instance();
 
     foreach ($userids as $userid) {
-        role_assign($roleid, $userid, $context->id, LOCAL_COHORTROLE_ROLE_COMPONENT, $cohortid);
+        try {
+            $user = core_user::get_user($userid, '*', MUST_EXIST);
+            core_user::require_active_user($user);
+            role_assign($roleid, $user->id, $context->id, LOCAL_COHORTROLE_ROLE_COMPONENT, $cohortid);
+        } catch (Exception $e) {
+            // Exception is caught. Do nothing.
+        }
     }
 }
 
