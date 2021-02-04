@@ -33,10 +33,14 @@ define('LOCAL_COHORTROLE_ROLE_COMPONENT', 'local_cohortrole');
  * @return void
  */
 function local_cohortrole_role_assign($cohortid, $roleid, array $userids) {
-    $context = context_system::instance();
+    global $DB;
 
+    $context = context_system::instance();
+    $deleted = $DB->get_records_menu('user', array('deleted' => 1));
     foreach ($userids as $userid) {
-        role_assign($roleid, $userid, $context->id, LOCAL_COHORTROLE_ROLE_COMPONENT, $cohortid);
+        if (!isset($deleted[$userid])) {
+            role_assign($roleid, $userid, $context->id, LOCAL_COHORTROLE_ROLE_COMPONENT, $cohortid);
+        }
     }
 }
 
