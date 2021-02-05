@@ -36,10 +36,13 @@ function local_cohortrole_role_assign($cohortid, $roleid, array $userids) {
     global $DB;
 
     $context = context_system::instance();
-    $deleted = $DB->get_records_menu('user', array('deleted' => 1));
     foreach ($userids as $userid) {
-        if (!isset($deleted[$userid])) {
+        $user = core_user::get_user($userid, '*', MUST_EXIST);
+        try {
+            $active = core_user::require_active_user($user);
             role_assign($roleid, $userid, $context->id, LOCAL_COHORTROLE_ROLE_COMPONENT, $cohortid);
+        } catch (Exception $e) {
+            // Exception is caught. Do nothing.
         }
     }
 }
