@@ -119,5 +119,33 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018121001, 'local', 'cohortrole');
     }
 
+    if ($oldversion < 2020110901) {
+        // Define field categoryid to be added to local_cohortrole.
+        $table = new xmldb_table('local_cohortrole');
+        $field = new xmldb_field('categoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'roleid');
+
+        // Conditionally launch add field categoryid.
+        if (! $dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define key fk_category (foreign) to be added to local_cohortrole.
+        $key = new xmldb_key('fk_category', XMLDB_KEY_FOREIGN, array('categoryid'), 'course_categories', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Conditionally launch drop and add index 'uq_cohort_role'.
+        $index = new xmldb_index('uq_cohort_role', XMLDB_INDEX_UNIQUE, array('cohortid', 'roleid'));
+
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $index = new xmldb_index('uq_cohort_role', XMLDB_INDEX_UNIQUE, array('cohortid', 'roleid', 'categoryid'));
+        $dbman->add_index($table, $index);
+
+        // Cohortrole savepoint reached.
+        upgrade_plugin_savepoint(true, 2020110901, 'local', 'cohortrole');
+    }
+
     return true;
 }

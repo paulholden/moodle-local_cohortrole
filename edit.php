@@ -26,19 +26,20 @@ require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
 
 use \local_cohortrole\persistent;
 
-$delete   = optional_param('delete', 0, PARAM_INT);
-$confirm  = optional_param('confirm', 0, PARAM_BOOL);
+$delete = optional_param('delete', 0, PARAM_INT);
+$confirm = optional_param('confirm', 0, PARAM_BOOL);
+$mode = optional_param('mode', 0, PARAM_INT);
 
 admin_externalpage_setup('local_cohortrole');
 
-$editurl   = new moodle_url('/local/cohortrole/edit.php');
+$editurl = new moodle_url('/local/cohortrole/edit.php');
 $returnurl = clone($PAGE->url);
 
 if ($delete) {
     $persistent = new persistent($delete);
 
     if ($confirm and confirm_sesskey()) {
-        local_cohortrole_unsynchronize($persistent->get('cohortid'), $persistent->get('roleid'));
+        local_cohortrole_unsynchronize($persistent->get('cohortid'), $persistent->get('roleid'), $persistent->get('categoryid'));
 
         $persistent->delete();
 
@@ -58,14 +59,14 @@ if ($delete) {
     die;
 }
 
-$mform = new \local_cohortrole\form\edit($editurl, ['persistent' => null]);
+$mform = new \local_cohortrole\form\edit($editurl, ['persistent' => null, 'modeid' => $mode]);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $mform->get_data()) {
     $persistent = (new persistent(0, $data))->create();
 
-    local_cohortrole_synchronize($persistent->get('cohortid'), $persistent->get('roleid'));
+    local_cohortrole_synchronize($persistent->get('cohortid'), $persistent->get('roleid'), $persistent->get('categoryid'));
 
     redirect($returnurl, get_string('notificationcreated', 'local_cohortrole'), null,
         \core\output\notification::NOTIFY_SUCCESS);
@@ -74,7 +75,7 @@ if ($mform->is_cancelled()) {
 $PAGE->navbar->add(get_string('add'));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('heading_add', 'local_cohortrole'));
+echo $OUTPUT->heading(get_string('heading_add', 'local_cohortrole', local_cohortrole_get_context_name($mode)));
 
 $mform->display();
 

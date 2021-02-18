@@ -39,12 +39,10 @@ class observers {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
             $instances = persistent::get_records(['cohortid' => $cohort->id]);
-            if (count($instances) > 0) {
-                local_cohortrole_unsynchronize($cohort->id);
+            foreach ($instances as $instance) {
+                local_cohortrole_unsynchronize($cohort->id, $instance->get('roleid'), $instance->get('categoryid'));
 
-                foreach ($instances as $instance) {
-                    $instance->delete();
-                }
+                $instance->delete();
             }
         }
     }
@@ -64,7 +62,8 @@ class observers {
                 $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
                 foreach ($instances as $instance) {
-                    local_cohortrole_role_assign($instance->get('cohortid'), $instance->get('roleid'), [$user->id]);
+                    local_cohortrole_role_assign($instance->get('cohortid'), $instance->get('roleid'), $instance->get('categoryid'),
+                        [$user->id]);
                 }
             }
         }
@@ -85,7 +84,8 @@ class observers {
                 $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
                 foreach ($instances as $instance) {
-                    local_cohortrole_role_unassign($instance->get('cohortid'), $instance->get('roleid'), [$user->id]);
+                    local_cohortrole_role_unassign($instance->get('cohortid'), $instance->get('roleid'),
+                        $instance->get('categoryid'), [$user->id]);
                 }
             }
         }

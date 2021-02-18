@@ -32,7 +32,7 @@
  */
 class local_cohortrole_observers_testcase extends advanced_testcase {
 
-    /** @var \local_cohortrole\persistent $persistent. */
+    /** @var \local_cohortrole\persistent $persistent */
     protected $persistent;
 
     /**
@@ -42,6 +42,7 @@ class local_cohortrole_observers_testcase extends advanced_testcase {
         global $CFG;
 
         require_once("{$CFG->dirroot}/cohort/lib.php");
+        require_once("{$CFG->dirroot}/local/cohortrole/locallib.php");
     }
 
     /**
@@ -50,13 +51,17 @@ class local_cohortrole_observers_testcase extends advanced_testcase {
     protected function setUp(): void {
         $this->resetAfterTest(true);
 
-        // Create test role/cohort.
+        // Create test role, cohort and category.
         $roleid = $this->getDataGenerator()->create_role();
         $cohort = $this->getDataGenerator()->create_cohort();
+        $category = $this->getDataGenerator()->create_category();
 
-        // Link them together.
-        $this->persistent = $this->getDataGenerator()->get_plugin_generator('local_cohortrole')
-            ->create_persistent(['roleid' => $roleid, 'cohortid' => $cohort->id]);
+        // Create role synchronizations and link them together.
+        $categoryids = [0, $category->id];
+        foreach ($categoryids as $categoryid) {
+            $this->persistent = $this->getDataGenerator()->get_plugin_generator('local_cohortrole')
+                ->create_persistent(['roleid' => $roleid, 'cohortid' => $cohort->id, 'categoryid' => $categoryid]);
+        }
     }
 
     /**
@@ -65,19 +70,29 @@ class local_cohortrole_observers_testcase extends advanced_testcase {
      * @return void
      */
     public function test_cohort_deleted() {
-        $context = context_system::instance();
+        $systemcontext = local_cohortrole_get_context(LOCAL_COHORTROLE_MODE_SYSTEM);
+        $coursecategorycontext = local_cohortrole_get_context($this->persistent->get('categoryid'));
 
         $user = $this->getDataGenerator()->create_user();
         cohort_add_member($this->persistent->get('cohortid'), $user->id);
 
-        $userhasrole = user_has_role_assignment($user->id, $this->persistent->get('roleid'), $context->id);
-        $this->assertTrue($userhasrole);
+        $userhasroleinsystem = user_has_role_assignment($user->id, $this->persistent->get('roleid'), $systemcontext->id);
+        $this->assertTrue($userhasroleinsystem);
+
+        $userhasroleincoursecategory =
+            user_has_role_assignment($user->id, $this->persistent->get('roleid'), $coursecategorycontext->id);
+        $this->assertTrue($userhasroleincoursecategory);
 
         cohort_delete_cohort($this->persistent->get_cohort());
 
-        // User should not be assigned to the test role.
-        $userhasrole = user_has_role_assignment($user->id, $this->persistent->get('roleid'), $context->id);
-        $this->assertFalse($userhasrole);
+        // User should not be assigned to the test role in the system.
+        $userhasroleinsystem = user_has_role_assignment($user->id, $this->persistent->get('roleid'), $systemcontext->id);
+        $this->assertFalse($userhasroleinsystem);
+
+        // User should not be assigned to the test role in the course category.
+        $userhasroleincoursecategory =
+            user_has_role_assignment($user->id, $this->persistent->get('roleid'), $coursecategorycontext->id);
+        $this->assertFalse($userhasroleincoursecategory);
 
         // Ensure plugin tables are cleaned up.
         $exists = $this->persistent->record_exists_select('cohortid = ?', [$this->persistent->get('cohortid')]);
@@ -90,18 +105,28 @@ class local_cohortrole_observers_testcase extends advanced_testcase {
      * @return void
      */
     public function test_cohort_member_added() {
-        $context = context_system::instance();
+        $systemcontext = local_cohortrole_get_context(LOCAL_COHORTROLE_MODE_SYSTEM);
+        $coursecategorycontext = local_cohortrole_get_context($this->persistent->get('categoryid'));
 
         $user = $this->getDataGenerator()->create_user();
 
-        $userhasrole = user_has_role_assignment($user->id, $this->persistent->get('roleid'), $context->id);
-        $this->assertFalse($userhasrole);
+        $userhasroleinsystem = user_has_role_assignment($user->id, $this->persistent->get('roleid'), $systemcontext->id);
+        $this->assertFalse($userhasroleinsystem);
+
+        $userhasroleincoursecategory =
+            user_has_role_assignment($user->id, $this->persistent->get('roleid'), $coursecategorycontext->id);
+        $this->assertFalse($userhasroleincoursecategory);
 
         cohort_add_member($this->persistent->get('cohortid'), $user->id);
 
-        // User should be assigned to the test role.
-        $userhasrole = user_has_role_assignment($user->id, $this->persistent->get('roleid'), $context->id);
-        $this->assertTrue($userhasrole);
+        // User should be assigned to the test role in the system.
+        $userhasroleinsystem = user_has_role_assignment($user->id, $this->persistent->get('roleid'), $systemcontext->id);
+        $this->assertTrue($userhasroleinsystem);
+
+        // User should be assigned to the test role in the course category.
+        $userhasroleincoursecategory =
+            user_has_role_assignment($user->id, $this->persistent->get('roleid'), $coursecategorycontext->id);
+        $this->assertTrue($userhasroleincoursecategory);
     }
 
     /**
@@ -110,7 +135,8 @@ class local_cohortrole_observers_testcase extends advanced_testcase {
      * @return void
      */
     public function test_cohort_member_removed() {
-        $context = context_system::instance();
+        $systemcontext = local_cohortrole_get_context(LOCAL_COHORTROLE_MODE_SYSTEM);
+        $coursecategorycontext = local_cohortrole_get_context($this->persistent->get('categoryid'));
 
         $user1 = $this->getDataGenerator()->create_user();
         cohort_add_member($this->persistent->get('cohortid'), $user1->id);
@@ -120,12 +146,21 @@ class local_cohortrole_observers_testcase extends advanced_testcase {
 
         cohort_remove_member($this->persistent->get('cohortid'), $user1->id);
 
-        // User 2 should be assigned to the test role, user 1 should not.
-        $userhasrole = user_has_role_assignment($user2->id, $this->persistent->get('roleid'), $context->id);
-        $this->assertTrue($userhasrole);
+        // User 2 should be assigned to the test role in the system, user 1 should not.
+        $userhasroleinsystem = user_has_role_assignment($user2->id, $this->persistent->get('roleid'), $systemcontext->id);
+        $this->assertTrue($userhasroleinsystem);
 
-        $userhasrole = user_has_role_assignment($user1->id, $this->persistent->get('roleid'), $context->id);
-        $this->assertFalse($userhasrole);
+        $userhasroleinsystem = user_has_role_assignment($user1->id, $this->persistent->get('roleid'), $systemcontext->id);
+        $this->assertFalse($userhasroleinsystem);
+
+        // User 2 should be assigned to the test role in the course category, user 1 should not.
+        $userhasroleincoursecategory =
+            user_has_role_assignment($user2->id, $this->persistent->get('roleid'), $coursecategorycontext->id);
+        $this->assertTrue($userhasroleincoursecategory);
+
+        $userhasroleincoursecategory =
+            user_has_role_assignment($user1->id, $this->persistent->get('roleid'), $coursecategorycontext->id);
+        $this->assertFalse($userhasroleincoursecategory);
     }
 
     /**

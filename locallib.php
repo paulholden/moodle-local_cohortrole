@@ -22,18 +22,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+define('LOCAL_COHORTROLE_MODE_SYSTEM', '0');
+define('LOCAL_COHORTROLE_MODE_CATEGORY', '1');
 define('LOCAL_COHORTROLE_ROLE_COMPONENT', 'local_cohortrole');
 
 /**
  * Assign users to a role; using local role component
  *
- * @param integer $cohortid the id of a cohort
- * @param integer $roleid the id of a role
+ * @param int $cohortid the id of a cohort
+ * @param int $roleid the id of a role
+ * @param int $categoryid the id of a category
  * @param array $userids an array of user ids to assign
  * @return void
  */
-function local_cohortrole_role_assign($cohortid, $roleid, array $userids) {
-    $context = context_system::instance();
+function local_cohortrole_role_assign($cohortid, $roleid, $categoryid, array $userids) {
+    $context = local_cohortrole_get_context($categoryid);
 
     foreach ($userids as $userid) {
         try {
@@ -49,13 +52,14 @@ function local_cohortrole_role_assign($cohortid, $roleid, array $userids) {
 /**
  * Unassign users from a role; using local role component
  *
- * @param integer $cohortid the id of a cohort
- * @param integer $roleid the id of a role
+ * @param int $cohortid the id of a cohort
+ * @param int $roleid the id of a role
+ * @param int $categoryid the id of a category
  * @param array $userids an array of user ids to unassign
  * @return void
  */
-function local_cohortrole_role_unassign($cohortid, $roleid, array $userids) {
-    $context = context_system::instance();
+function local_cohortrole_role_unassign($cohortid, $roleid, $categoryid, array $userids) {
+    $context = local_cohortrole_get_context($categoryid);
 
     foreach ($userids as $userid) {
         role_unassign($roleid, $userid, $context->id, LOCAL_COHORTROLE_ROLE_COMPONENT, $cohortid);
@@ -65,16 +69,17 @@ function local_cohortrole_role_unassign($cohortid, $roleid, array $userids) {
 /**
  * Add users to a role that synchronizes from a cohort
  *
- * @param integer $cohortid the id of a cohort
- * @param integer $roleid the id of a role
+ * @param int $cohortid the id of a cohort
+ * @param int $roleid the id of a role
+ * @param int $categoryid the id of a category
  * @return void
  */
-function local_cohortrole_synchronize($cohortid, $roleid) {
+function local_cohortrole_synchronize($cohortid, $roleid, $categoryid) {
     global $DB;
 
     $userids = $DB->get_records_menu('cohort_members', array('cohortid' => $cohortid), null, 'id, userid');
 
-    local_cohortrole_role_assign($cohortid, $roleid, $userids);
+    local_cohortrole_role_assign($cohortid, $roleid, $categoryid, $userids);
 }
 
 /**
@@ -84,9 +89,11 @@ function local_cohortrole_synchronize($cohortid, $roleid) {
  * @param integer|null $roleid the id of a role, all roles if null
  * @return void
  */
-function local_cohortrole_unsynchronize($cohortid, $roleid = null) {
+function local_cohortrole_unsynchronize($cohortid, $roleid = null, $categoryid) {
+    $context = local_cohortrole_get_context($categoryid);
+
     $params = array(
-        'contextid' => context_system::instance()->id, 'component' => LOCAL_COHORTROLE_ROLE_COMPONENT, 'itemid' => $cohortid);
+        'contextid' => $context->id, 'component' => LOCAL_COHORTROLE_ROLE_COMPONENT, 'itemid' => $cohortid);
 
     if ($roleid === null) {
         $roleids = local_cohortrole_get_cohort_roles($cohortid);
@@ -104,11 +111,67 @@ function local_cohortrole_unsynchronize($cohortid, $roleid = null) {
 /**
  * Get roles defined as being populated by a cohort
  *
- * @param integer $cohortid the id of a cohort
+ * @param int $cohortid the id of a cohort
  * @return array role ids
  */
-function local_cohortrole_get_cohort_roles($cohortid) {
+function local_cohortrole_get_cohort_roles(int $cohortid) {
     global $DB;
 
     return $DB->get_records_menu('local_cohortrole', array('cohortid' => $cohortid), null, 'id, roleid');
+}
+
+/**
+ * Get the context to assign and unassign roles.
+ *
+ * @param int $categoryid
+ * @return bool|context|context_coursecat|context_system|null
+ * @throws dml_exception
+ */
+function local_cohortrole_get_context(int $categoryid) {
+    if ($categoryid >= LOCAL_COHORTROLE_MODE_CATEGORY) {
+        return context_coursecat::instance($categoryid);
+    }
+
+    return $context = context_system::instance();
+}
+
+/**
+ * Returns the context name by the given mode.
+ *
+ * @param $mode
+ * @return string
+ * @throws coding_exception
+ * @throws dml_exception
+ */
+function local_cohortrole_get_context_name($mode): string {
+    $context = local_cohortrole_get_context($mode);
+    $contextname = strtok($context->get_context_name(), ':');
+
+    return $contextname;
+}
+
+/**
+ * Returns the buttons to launch the edit form by mode.
+ *
+ * @return string
+ * @throws coding_exception
+ * @throws dml_exception
+ * @throws moodle_exception
+ */
+function local_cohortrole_render_add_buttons(): string {
+    global $OUTPUT;
+
+    $output = html_writer::start_div('continuebutton mt-3', ['role' => 'group']);
+
+    $modes = [LOCAL_COHORTROLE_MODE_SYSTEM, LOCAL_COHORTROLE_MODE_CATEGORY];
+    foreach ($modes as $mode) {
+        $contextname = local_cohortrole_get_context_name($mode);
+
+        $output .= $OUTPUT->single_button(new moodle_url('/local/cohortrole/edit.php', ['mode' => $mode]),
+            get_string('assignrolesin', 'core_role', $contextname), 'get');
+    }
+
+    $output .= html_writer::end_div();
+
+    return $output;
 }

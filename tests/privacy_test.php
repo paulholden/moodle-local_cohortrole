@@ -55,13 +55,14 @@ class local_cohortrole_privacy_testcase extends provider_testcase {
         $this->user = $this->getDataGenerator()->create_user();
         $this->setUser($this->user);
 
-        // Create test role/cohort.
+        // Create test role, cohort and category.
         $roleid = $this->getDataGenerator()->create_role();
         $cohort = $this->getDataGenerator()->create_cohort();
+        $category = $this->getDataGenerator()->create_category();
 
         // Link them together.
         $this->persistent = $this->getDataGenerator()->get_plugin_generator('local_cohortrole')
-            ->create_persistent(['roleid' => $roleid, 'cohortid' => $cohort->id]);
+            ->create_persistent(['roleid' => $roleid, 'cohortid' => $cohort->id, 'categoryid' => $category->id]);
     }
 
     /**

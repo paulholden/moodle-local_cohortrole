@@ -41,6 +41,7 @@ class summary_table extends \table_sql implements \renderable {
         $columns = [
             'cohort' => get_string('cohort', 'local_cohortrole'),
             'role' => get_string('role', 'local_cohortrole'),
+            'category' => get_string('category', 'local_cohortrole'),
             'timecreated' => get_string('modified'),
             'edit' => get_string('edit'),
         ];
@@ -122,6 +123,22 @@ class summary_table extends \table_sql implements \renderable {
         $persistent = new persistent(0, $record);
 
         return role_get_name($persistent->get_role(), \context_system::instance(), ROLENAME_ALIAS);
+    }
+
+    /**
+     * Format record category column
+     *
+     * @param stdClass $record
+     * @return string
+     */
+    public function col_category(\stdClass $record) {
+        if ($record->categoryid == LOCAL_COHORTROLE_MODE_SYSTEM) {
+            return '';
+        }
+
+        $persistent = new persistent(0, $record);
+
+        return $persistent->get_category()->name;
     }
 
     /**

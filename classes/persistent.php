@@ -24,6 +24,8 @@ namespace local_cohortrole;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
+
 use \local_cohortrole\event\definition_created,
     \local_cohortrole\event\definition_deleted;
 
@@ -43,6 +45,9 @@ class persistent extends \core\persistent {
                 'type' => PARAM_INT,
             ),
             'roleid' => array(
+                'type' => PARAM_INT,
+            ),
+            'categoryid' => array(
                 'type' => PARAM_INT,
             ),
         );
@@ -77,6 +82,26 @@ class persistent extends \core\persistent {
 
         if (! $DB->record_exists('role', ['id' => $roleid])) {
             return new \lang_string('invalidroleid', 'error');
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate category ID
+     *
+     * @param int $categoryid
+     * @return true|lang_string
+     */
+    protected function validate_categoryid($categoryid) {
+        global $DB;
+
+        if ($categoryid == LOCAL_COHORTROLE_MODE_SYSTEM) {
+            return true;
+        }
+
+        if (! $DB->record_exists('course_categories', ['id' => $categoryid])) {
+            return new \lang_string('invalidcategoryid', 'error');
         }
 
         return true;
@@ -121,5 +146,16 @@ class persistent extends \core\persistent {
         global $DB;
 
         return $DB->get_record('role', ['id' => $this->get('roleid')], '*', MUST_EXIST);
+    }
+
+    /**
+     * Returns the category object
+     *
+     * @return stdClass
+     */
+    public function get_category() {
+        global $DB;
+
+        return $DB->get_record('course_categories', ['id' => $this->get('categoryid')], '*', MUST_EXIST);
     }
 }
