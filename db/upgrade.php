@@ -122,7 +122,7 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
     if ($oldversion < 2020110901) {
         // Define field categoryid to be added to local_cohortrole.
         $table = new xmldb_table('local_cohortrole');
-        $field = new xmldb_field('categoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'roleid');
+        $field = new xmldb_field('categoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'roleid');
 
         // Conditionally launch add field categoryid.
         if (! $dbman->field_exists($table, $field)) {
