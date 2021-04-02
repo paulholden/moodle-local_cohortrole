@@ -107,4 +107,22 @@ class observers {
             }
         }
     }
+
+    /**
+     * Category deleted
+     *
+     * @param \core\event\course_category_deleted $event the event
+     * @return void
+     */
+    public static function course_category_deleted(\core\event\course_category_deleted $event) {
+        if ($event->contextlevel == CONTEXT_COURSECAT) {
+            // MDL-71314: Fix the missing record snapshot issue. Workaround using contextinstanceid of event.
+            //$category = $event->get_record_snapshot('course_categories', $event->objectid);
+            //$instances = persistent::get_records(['categoryid' => $category->id]);
+            $instances = persistent::get_records(['categoryid' => $event->contextinstanceid]);
+            foreach ($instances as $instance) {
+                $instance->delete();
+            }
+        }
+    }
 }

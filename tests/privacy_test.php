@@ -127,6 +127,7 @@ class local_cohortrole_privacy_testcase extends provider_testcase {
         $definition = reset($data);
         $this->assertSame($this->persistent->get_cohort()->name, $definition->cohort);
         $this->assertSame(role_get_name($this->persistent->get_role(), $context, ROLENAME_ALIAS), $definition->role);
+        $this->assertSame($this->persistent->get_category()->name, $definition->category);
         $this->assertObjectHasAttribute('timecreated', $definition);
     }
 }

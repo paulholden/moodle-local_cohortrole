@@ -42,4 +42,8 @@ $observers = array(
         'eventname' => '\core\event\role_deleted',
         'callback'  => '\local_cohortrole\observers::role_deleted',
     ),
+    array(
+        'eventname' => '\core\event\course_category_deleted',
+        'callback'  => '\local_cohortrole\observers::course_category_deleted',
+    ),
 );

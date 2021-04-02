@@ -48,6 +48,7 @@ class provider implements
         $collection->add_database_table('local_cohortrole', [
             'cohortid' => 'privacy:metadata:cohortrole:cohortid',
             'roleid' => 'privacy:metadata:cohortrole:roleid',
+            'categoryid' => 'privacy:metadata:cohortrole:categoryid',
             'usermodified' => 'privacy:metadata:cohortrole:usermodified',
             'timecreated' => 'privacy:metadata:cohortrole:timecreated',
 
@@ -112,6 +113,7 @@ class provider implements
             $data[] = (object) [
                 'cohort' => $instance->get_cohort()->name,
                 'role' => role_get_name($instance->get_role(), $context, ROLENAME_ALIAS),
+                'category' => $instance->get_category()->name,
                 'timecreated' => transform::datetime($instance->get('timecreated')),
             ];
         }

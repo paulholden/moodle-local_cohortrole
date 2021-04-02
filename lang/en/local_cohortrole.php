@@ -36,6 +36,7 @@ $string['notificationdeleted'] = 'Deleted synchronization';
 $string['pluginname'] = 'Cohort role synchronization';
 $string['privacy:metadata:cohortrole'] = 'Contains cohort to role synchronization definitions';
 $string['privacy:metadata:cohortrole:cohortid'] = 'The ID of the cohort';
+$string['privacy:metadata:cohortrole:categoryid'] = 'The ID of the category';
 $string['privacy:metadata:cohortrole:roleid'] = 'The ID of the role';
 $string['privacy:metadata:cohortrole:usermodified'] = 'The ID of the user who created the definition';
 $string['privacy:metadata:cohortrole:timecreated'] = 'The timestamp the definition was created';

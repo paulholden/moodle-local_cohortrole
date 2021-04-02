@@ -175,4 +175,19 @@ class local_cohortrole_observers_testcase extends advanced_testcase {
         $exists = $this->persistent->record_exists_select('roleid = ?', [$this->persistent->get('roleid')]);
         $this->assertFalse($exists);
     }
+
+    /**
+     * Tests course_category_deleted event observer
+     *
+     * @return void
+     */
+    public function test_course_category_deleted() {
+        $coursecat  = \core_course_category::get($this->persistent->get('categoryid'));
+
+        $coursecat->delete_full();
+
+        // Ensure plugin tables are cleaned up.
+        $exists = $this->persistent->record_exists_select('categoryid = ?', [$this->persistent->get('categoryid')]);
+        $this->assertFalse($exists);
+    }
 }
