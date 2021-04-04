@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Moodle 3.5.3 or later.
+- Moodle 3.6 or later.
 
 ## Installation
 
@@ -15,10 +15,10 @@ Once installed, you should see a new option in your site administration:
 ## Usage
 
 1. Create system-level cohort(s).
-2. Create system-level assignable role(s) - optional, you can also use existing roles.
+2. Create system-level or category-level assignable role(s) - optional, you can also use existing roles.
 3. Visit Cohort role synchronization page.
-4. Create new link between cohort and role.
-5. Users will automatically be (un)assigned to the role according to their membership of selected cohort.
+4. Create new link between cohort and role on system context or a specific course category.
+5. Users will automatically be (un)assigned to the role within the specified context according to their membership of selected cohort.
 
 ## Author
 
