@@ -137,8 +137,9 @@ class summary_table extends \table_sql implements \renderable {
         }
 
         $persistent = new persistent(0, $record);
+        $category = \core_course_category::get($persistent->get_category()->id);
 
-        return $persistent->get_category()->name;
+        return $category->get_nested_name();
     }
 
     /**
