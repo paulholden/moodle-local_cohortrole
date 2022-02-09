@@ -119,7 +119,7 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018121001, 'local', 'cohortrole');
     }
 
-    if ($oldversion < 2020110901) {
+    if ($oldversion < 2021060801) {
         // Define field categoryid to be added to local_cohortrole.
         $table = new xmldb_table('local_cohortrole');
         $field = new xmldb_field('categoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'roleid');
@@ -144,7 +144,7 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
         $dbman->add_index($table, $index);
 
         // Cohortrole savepoint reached.
-        upgrade_plugin_savepoint(true, 2020110901, 'local', 'cohortrole');
+        upgrade_plugin_savepoint(true, 2021060801, 'local', 'cohortrole');
     }
 
     return true;
