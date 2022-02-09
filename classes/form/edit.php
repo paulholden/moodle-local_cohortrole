@@ -33,6 +33,9 @@ class edit extends \core\form\persistent {
     /** @var string Persistent class name. */
     protected static $persistentclass = persistent::class;
 
+    /** @var array Fields to remove when getting the final data. */
+    protected static $fieldstoremove = array('submitbutton', 'modeid');
+
     /**
      * Form definition
      *
@@ -41,15 +44,25 @@ class edit extends \core\form\persistent {
     protected function definition() {
         $mform = $this->_form;
 
+        $mode = $this->_customdata['modeid'];
+
+        $mform->addElement('hidden', 'modeid', $mode);
+        $mform->setType('modeid', PARAM_INT);
+
         $mform->addElement('select', 'cohortid', get_string('cohort', 'local_cohortrole'), self::get_cohorts());
         $mform->addRule('cohortid', get_string('required'), 'required', null, 'client');
         $mform->setType('cohortid', PARAM_INT);
         $mform->addHelpButton('cohortid', 'cohort', 'local_cohortrole');
 
-        $mform->addElement('select', 'roleid', get_string('role', 'local_cohortrole'), self::get_roles());
+        $mform->addElement('select', 'roleid', get_string('role', 'local_cohortrole'), self::get_roles($mode));
         $mform->addRule('roleid', get_string('required'), 'required', null, 'client');
         $mform->setType('roleid', PARAM_INT);
         $mform->addHelpButton('roleid', 'role', 'local_cohortrole');
+
+        $mform->addElement('select', 'categoryid', get_string('category', 'local_cohortrole'), self::get_categories());
+        $mform->setType('categoryid', PARAM_INT);
+        $mform->addHelpButton('categoryid', 'category', 'local_cohortrole');
+        $mform->hideIf('categoryid', 'modeid', 'eq', 0);
 
         $this->add_action_buttons();
     }
@@ -63,8 +76,8 @@ class edit extends \core\form\persistent {
      * @return array
      */
     public function extra_validation($data, $files, array &$errors) {
-        if ($this->get_persistent()->record_exists_select('cohortid = :cohortid AND roleid = :roleid',
-                ['cohortid' => $data->cohortid, 'roleid' => $data->roleid])) {
+        if ($this->get_persistent()->record_exists_select('cohortid = :cohortid AND roleid = :roleid AND categoryid = :categoryid',
+            ['cohortid' => $data->cohortid, 'roleid' => $data->roleid, 'categoryid' => $data->categoryid])) {
 
             $errors['cohortid'] = get_string('errorexists', 'local_cohortrole');
         }
@@ -89,15 +102,31 @@ class edit extends \core\form\persistent {
     }
 
     /**
-     * Get roles that are assignable in the system context
+     * Get roles that are assignable in the system or course category context
      *
+     * @param string $modeid The selected modeid (0 = System, 1 = Category)
      * @return array
      */
-    protected static function get_roles() {
-        $roles = get_assignable_roles(\context_system::instance(), ROLENAME_ALIAS);
+    protected static function get_roles($modeid) {
+        $context = local_cohortrole_get_context($modeid);
+
+        $roles = get_assignable_roles($context, ROLENAME_ALIAS);
 
         \core_collator::asort($roles, \core_collator::SORT_STRING);
 
         return $roles;
+    }
+
+    /**
+     * Get categories from the system
+     *
+     * @return array
+     */
+    protected static function get_categories() {
+        $categories = [0 => get_string('choosedots')] + \core_course_category::make_categories_list();
+
+        \core_collator::asort($categories, \core_collator::SORT_STRING);
+
+        return $categories;
     }
 }

@@ -22,6 +22,7 @@
 
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
 
 admin_externalpage_setup('local_cohortrole');
 
@@ -33,6 +34,6 @@ $table->define_baseurl($PAGE->url);
 
 echo $PAGE->get_renderer('local_cohortrole')->render($table);
 
-echo $OUTPUT->single_button(new moodle_url('/local/cohortrole/edit.php'), get_string('add'), 'get', ['class' => 'continuebutton']);
+echo local_cohortrole_render_add_buttons();
 
 echo $OUTPUT->footer();

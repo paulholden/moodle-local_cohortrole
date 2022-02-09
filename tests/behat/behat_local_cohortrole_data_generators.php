@@ -40,7 +40,7 @@ class behat_local_cohortrole_data_generators extends behat_base {
 
         $generator = testing_util::get_data_generator()->get_plugin_generator('local_cohortrole');
 
-        $requiredfields = ['cohort', 'role'];
+        $requiredfields = ['cohort', 'role', 'category'];
 
         foreach ($data->getHash() as $elementdata) {
             foreach ($requiredfields as $requiredfield) {
@@ -70,6 +70,9 @@ class behat_local_cohortrole_data_generators extends behat_base {
 
         $data['roleid'] = $DB->get_field('role', 'id', ['shortname' => $data['role']], MUST_EXIST);
         unset($data['role']);
+
+        $data['categoryid'] = $DB->get_field('course_categories', 'id', ['idnumber' => $data['category']], MUST_EXIST);
+        unset($data['category']);
 
         return $data;
     }

@@ -55,13 +55,14 @@ class local_cohortrole_privacy_testcase extends provider_testcase {
         $this->user = $this->getDataGenerator()->create_user();
         $this->setUser($this->user);
 
-        // Create test role/cohort.
+        // Create test role, cohort and category.
         $roleid = $this->getDataGenerator()->create_role();
         $cohort = $this->getDataGenerator()->create_cohort();
+        $category = $this->getDataGenerator()->create_category();
 
         // Link them together.
         $this->persistent = $this->getDataGenerator()->get_plugin_generator('local_cohortrole')
-            ->create_persistent(['roleid' => $roleid, 'cohortid' => $cohort->id]);
+            ->create_persistent(['roleid' => $roleid, 'cohortid' => $cohort->id, 'categoryid' => $category->id]);
     }
 
     /**
@@ -126,6 +127,7 @@ class local_cohortrole_privacy_testcase extends provider_testcase {
         $definition = reset($data);
         $this->assertSame($this->persistent->get_cohort()->name, $definition->cohort);
         $this->assertSame(role_get_name($this->persistent->get_role(), $context, ROLENAME_ALIAS), $definition->role);
+        $this->assertSame($this->persistent->get_category()->name, $definition->category);
         $this->assertObjectHasAttribute('timecreated', $definition);
     }
 }
