@@ -37,7 +37,7 @@ $returnurl = clone($PAGE->url);
 if ($delete) {
     $persistent = new persistent($delete);
 
-    if ($confirm and confirm_sesskey()) {
+    if ($confirm && confirm_sesskey()) {
         local_cohortrole_unsynchronize($persistent->get('cohortid'), $persistent->get('roleid'));
 
         $persistent->delete();

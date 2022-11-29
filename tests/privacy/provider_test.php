@@ -14,28 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    local_cohortrole
- * @copyright  2019 Paul Holden (pholden@greenhead.ac.uk)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace local_cohortrole\privacy;
 
+use context_system;
+use stdClass;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
-use local_cohortrole\privacy\provider;
 
 /**
  * Unit tests for Privacy API
  *
  * @package    local_cohortrole
- * @group      local_cohortrole
  * @covers     \local_cohortrole\privacy\provider
  * @covers     \local_cohortrole\persistent
  * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_cohortrole_privacy_testcase extends provider_testcase {
+class provider_test extends provider_testcase {
 
     /** @var stdClass $user. */
     protected $user;

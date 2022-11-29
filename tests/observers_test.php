@@ -14,23 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    local_cohortrole
- * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace local_cohortrole;
+
+use advanced_testcase;
+use context_system;
 
 /**
  * Unit tests for event observers
  *
  * @package    local_cohortrole
- * @group      local_cohortrole
  * @covers     \local_cohortrole\observers
  * @covers     \local_cohortrole\persistent
  * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_cohortrole_observers_testcase extends advanced_testcase {
+class observers_test extends advanced_testcase {
 
     /** @var \local_cohortrole\persistent $persistent. */
     protected $persistent;

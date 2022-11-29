@@ -14,19 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    local_cohortrole
- * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace local_cohortrole;
-
-defined('MOODLE_INTERNAL') || die();
 
 use \local_cohortrole\event\definition_created,
     \local_cohortrole\event\definition_deleted;
 
+/**
+ * Cohort role persistent definition
+ *
+ * @package    local_cohortrole
+ * @copyright  2018 Paul Holden <paulh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class persistent extends \core\persistent {
 
     /** Table name for the persistent. */

@@ -20,8 +20,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 define('LOCAL_COHORTROLE_ROLE_COMPONENT', 'local_cohortrole');
 
 /**
@@ -40,7 +38,7 @@ function local_cohortrole_role_assign($cohortid, $roleid, array $userids) {
             $user = core_user::get_user($userid, '*', MUST_EXIST);
             core_user::require_active_user($user);
             role_assign($roleid, $user->id, $context->id, LOCAL_COHORTROLE_ROLE_COMPONENT, $cohortid);
-        } catch (Exception $e) {
+        } catch (Exception $e) { // phpcs:ignore
             // Exception is caught. Do nothing.
         }
     }
