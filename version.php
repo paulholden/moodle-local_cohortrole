@@ -15,15 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Plugin version details
+ *
  * @package    local_cohortrole
- * @copyright  2013 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2013 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_cohortrole';
-$plugin->release   = '3.4';
-$plugin->version   = 2021060800;
-$plugin->requires  = 2018051703; // Moodle 3.5.3 onwards.
+$plugin->release   = '4.1';
+$plugin->version   = 2022112900;
+$plugin->requires  = 2020061500; // Moodle 3.9 onwards.
 $plugin->maturity  = MATURITY_STABLE;
