@@ -70,7 +70,7 @@ function local_cohortrole_role_unassign($cohortid, $roleid, array $userids) {
 function local_cohortrole_synchronize($cohortid, $roleid) {
     global $DB;
 
-    $userids = $DB->get_records_menu('cohort_members', array('cohortid' => $cohortid), null, 'id, userid');
+    $userids = $DB->get_records_menu('cohort_members', ['cohortid' => $cohortid], null, 'id, userid');
 
     local_cohortrole_role_assign($cohortid, $roleid, $userids);
 }
@@ -83,13 +83,13 @@ function local_cohortrole_synchronize($cohortid, $roleid) {
  * @return void
  */
 function local_cohortrole_unsynchronize($cohortid, $roleid = null) {
-    $params = array(
-        'contextid' => context_system::instance()->id, 'component' => LOCAL_COHORTROLE_ROLE_COMPONENT, 'itemid' => $cohortid);
+    $params = [
+        'contextid' => context_system::instance()->id, 'component' => LOCAL_COHORTROLE_ROLE_COMPONENT, 'itemid' => $cohortid, ];
 
     if ($roleid === null) {
         $roleids = local_cohortrole_get_cohort_roles($cohortid);
     } else {
-        $roleids = array($roleid);
+        $roleids = [$roleid];
     }
 
     foreach ($roleids as $roleid) {
@@ -108,5 +108,5 @@ function local_cohortrole_unsynchronize($cohortid, $roleid = null) {
 function local_cohortrole_get_cohort_roles($cohortid) {
     global $DB;
 
-    return $DB->get_records_menu('local_cohortrole', array('cohortid' => $cohortid), null, 'id, roleid');
+    return $DB->get_records_menu('local_cohortrole', ['cohortid' => $cohortid], null, 'id, roleid');
 }

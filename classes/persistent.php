@@ -16,8 +16,9 @@
 
 namespace local_cohortrole;
 
-use \local_cohortrole\event\definition_created,
-    \local_cohortrole\event\definition_deleted;
+use lang_string;
+use local_cohortrole\event\{definition_created, definition_deleted};
+use stdClass;
 
 /**
  * Cohort role persistent definition
@@ -37,14 +38,14 @@ class persistent extends \core\persistent {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'cohortid' => array(
+        return [
+            'cohortid' => [
                 'type' => PARAM_INT,
-            ),
-            'roleid' => array(
+            ],
+            'roleid' => [
                 'type' => PARAM_INT,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -59,7 +60,7 @@ class persistent extends \core\persistent {
         $context = \context_system::instance();
 
         if (! $DB->record_exists('cohort', ['id' => $cohortid, 'contextid' => $context->id])) {
-            return new \lang_string('invaliditemid', 'error');
+            return new lang_string('invaliditemid', 'error');
         }
 
         return true;
@@ -75,7 +76,7 @@ class persistent extends \core\persistent {
         global $DB;
 
         if (! $DB->record_exists('role', ['id' => $roleid])) {
-            return new \lang_string('invalidroleid', 'error');
+            return new lang_string('invalidroleid', 'error');
         }
 
         return true;

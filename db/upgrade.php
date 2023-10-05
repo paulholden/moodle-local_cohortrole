@@ -44,7 +44,7 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
         }
 
         // Define key fk_user (foreign) to be added to local_cohortrole.
-        $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
 
         // Launch add key fk_user.
         $dbman->add_key($table, $key);
@@ -90,7 +90,7 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
         $table = new xmldb_table('local_cohortrole');
 
         // Define key fk_user (foreign) to be dropped from local_cohortrole.
-        $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
         $dbman->drop_key($table, $key);
 
         // Rename field userid on table local_cohortrole to usermodified.
@@ -98,7 +98,7 @@ function xmldb_local_cohortrole_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'usermodified');
 
         // Define key fk_user (foreign) to be added to local_cohortrole.
-        $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
+        $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
         $dbman->add_key($table, $key);
 
         // Cohortrole savepoint reached.

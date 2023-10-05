@@ -24,7 +24,7 @@ namespace local_cohortrole\form;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \local_cohortrole\persistent;
+use local_cohortrole\persistent;
 
 require_once($CFG->dirroot . '/cohort/lib.php');
 
@@ -80,7 +80,7 @@ class edit extends \core\form\persistent {
     protected static function get_cohorts() {
         $cohorts = cohort_get_cohorts(\context_system::instance()->id, null, null);
 
-        $result = array();
+        $result = [];
         foreach ($cohorts['cohorts'] as $cohort) {
             $result[$cohort->id] = $cohort->name;
         }

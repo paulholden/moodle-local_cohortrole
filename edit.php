@@ -24,7 +24,7 @@ require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
 
-use \local_cohortrole\persistent;
+use local_cohortrole\persistent;
 
 $delete   = optional_param('delete', 0, PARAM_INT);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);

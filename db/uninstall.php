@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
  * @return bool true if success
  */
 function xmldb_local_cohortrole_uninstall() {
-    $params = array('contextid' => context_system::instance()->id, 'component' => LOCAL_COHORTROLE_ROLE_COMPONENT);
+    $params = ['contextid' => context_system::instance()->id, 'component' => LOCAL_COHORTROLE_ROLE_COMPONENT];
 
     role_unassign_all($params, false, false);
 

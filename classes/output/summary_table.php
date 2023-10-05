@@ -24,7 +24,7 @@ namespace local_cohortrole\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \local_cohortrole\persistent;
+use local_cohortrole\persistent;
 
 require_once($CFG->libdir . '/tablelib.php');
 

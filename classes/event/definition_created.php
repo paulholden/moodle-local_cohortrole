@@ -17,7 +17,7 @@
 
 namespace local_cohortrole\event;
 
-use \local_cohortrole\persistent;
+use local_cohortrole\persistent;
 
 /**
  * The local_cohortrole definition created event class.

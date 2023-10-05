@@ -22,7 +22,7 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use \Behat\Gherkin\Node\TableNode;
+use Behat\Gherkin\Node\TableNode;
 
 class behat_local_cohortrole_data_generators extends behat_base {
 
