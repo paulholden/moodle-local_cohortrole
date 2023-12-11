@@ -109,7 +109,7 @@ class summary_table extends \table_sql implements \renderable {
     public function col_cohort(\stdClass $record) {
         $persistent = new persistent(0, $record);
 
-        return format_string($persistent->get_cohort()->name, true, \context_system::instance());
+        return format_string($persistent->get_cohort()->name, true, ['context' => \context_system::instance()]);
     }
 
     /**
