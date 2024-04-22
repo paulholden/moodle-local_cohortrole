@@ -114,6 +114,6 @@ final class provider_test extends provider_testcase {
         $definition = reset($data);
         $this->assertSame($this->persistent->get_cohort()->name, $definition->cohort);
         $this->assertSame(role_get_name($this->persistent->get_role(), $context, ROLENAME_ALIAS), $definition->role);
-        $this->assertObjectHasAttribute('timecreated', $definition);
+        $this->assertNotEmpty($definition->timecreated);
     }
 }
