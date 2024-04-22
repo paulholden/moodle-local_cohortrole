@@ -15,8 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Plugin settings
+ *
  * @package    local_cohortrole
- * @copyright  2013 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2013 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

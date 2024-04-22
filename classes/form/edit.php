@@ -14,12 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    local_cohortrole
- * @copyright  2013 Paul Holden (pholden@greenhead.ac.uk)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace local_cohortrole\form;
 
 defined('MOODLE_INTERNAL') || die();
@@ -28,6 +22,13 @@ use local_cohortrole\persistent;
 
 require_once($CFG->dirroot . '/cohort/lib.php');
 
+/**
+ * Editing form
+ *
+ * @package    local_cohortrole
+ * @copyright  2013 Paul Holden <paulh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class edit extends \core\form\persistent {
 
     /** @var string Persistent class name. */

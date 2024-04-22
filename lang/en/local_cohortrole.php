@@ -15,8 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Plugin language strings
+ *
  * @package    local_cohortrole
- * @copyright  2013 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2013 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,7 +39,7 @@ $string['pluginname'] = 'Cohort role synchronization';
 $string['privacy:metadata:cohortrole'] = 'Contains cohort to role synchronization definitions';
 $string['privacy:metadata:cohortrole:cohortid'] = 'The ID of the cohort';
 $string['privacy:metadata:cohortrole:roleid'] = 'The ID of the role';
-$string['privacy:metadata:cohortrole:usermodified'] = 'The ID of the user who created the definition';
 $string['privacy:metadata:cohortrole:timecreated'] = 'The timestamp the definition was created';
+$string['privacy:metadata:cohortrole:usermodified'] = 'The ID of the user who created the definition';
 $string['role'] = 'Role';
 $string['role_help'] = 'List of assignable roles in the system context';

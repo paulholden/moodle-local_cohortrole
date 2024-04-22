@@ -28,10 +28,10 @@ use core_privacy\tests\provider_testcase;
  * @package    local_cohortrole
  * @covers     \local_cohortrole\privacy\provider
  * @covers     \local_cohortrole\persistent
- * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2018 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /** @var stdClass $user. */
     protected $user;
@@ -62,10 +62,8 @@ class provider_test extends provider_testcase {
 
     /**
      * Tests provider get_contexts_for_userid method
-     *
-     * @return void
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $contextlist = provider::get_contexts_for_userid($this->user->id);
         $this->assertCount(1, $contextlist);
 
@@ -77,10 +75,8 @@ class provider_test extends provider_testcase {
 
     /**
      * Tests provider get_contexts_for_userid method when user has no group membership
-     *
-     * @return void
      */
-    public function test_get_contexts_for_userid_no_definitions() {
+    public function test_get_contexts_for_userid_no_definitions(): void {
         $user = $this->getDataGenerator()->create_user();
 
         $contextlist = provider::get_contexts_for_userid($user->id);
@@ -89,10 +85,8 @@ class provider_test extends provider_testcase {
 
     /**
      * Tests provider get_users_in_context method
-     *
-     * @return void
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $context = context_system::instance();
 
         $userlist = new userlist($context, 'local_cohortrole');
@@ -104,10 +98,8 @@ class provider_test extends provider_testcase {
 
     /**
      * Test provider export_user_data method
-     *
-     * @return void
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $context = context_system::instance();
         $this->export_context_data_for_user($this->user->id, $context, 'local_cohortrole');
 

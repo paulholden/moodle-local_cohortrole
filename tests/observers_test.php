@@ -25,10 +25,10 @@ use context_system;
  * @package    local_cohortrole
  * @covers     \local_cohortrole\observers
  * @covers     \local_cohortrole\persistent
- * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2018 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class observers_test extends advanced_testcase {
+final class observers_test extends advanced_testcase {
 
     /** @var \local_cohortrole\persistent $persistent. */
     protected $persistent;
@@ -59,10 +59,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests cohort_deleted event observer
-     *
-     * @return void
      */
-    public function test_cohort_deleted() {
+    public function test_cohort_deleted(): void {
         $context = context_system::instance();
 
         $user = $this->getDataGenerator()->create_user();
@@ -84,10 +82,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests cohort_member_added event observer
-     *
-     * @return void
      */
-    public function test_cohort_member_added() {
+    public function test_cohort_member_added(): void {
         $context = context_system::instance();
 
         $user = $this->getDataGenerator()->create_user();
@@ -104,10 +100,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests cohort_member_removed event observer
-     *
-     * @return void
      */
-    public function test_cohort_member_removed() {
+    public function test_cohort_member_removed(): void {
         $context = context_system::instance();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -128,10 +122,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests role_deleted event observer
-     *
-     * @return void
      */
-    public function test_role_deleted() {
+    public function test_role_deleted(): void {
         delete_role($this->persistent->get('roleid'));
 
         // Ensure plugin tables are cleaned up.
