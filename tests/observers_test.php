@@ -39,6 +39,8 @@ final class observers_test extends advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
 
+        parent::setUpBeforeClass();
+
         require_once("{$CFG->dirroot}/cohort/lib.php");
     }
 
@@ -46,6 +48,8 @@ final class observers_test extends advanced_testcase {
      * Test setup
      */
     protected function setUp(): void {
+        parent::setUp();
+
         $this->resetAfterTest(true);
 
         // Create test role/cohort.
