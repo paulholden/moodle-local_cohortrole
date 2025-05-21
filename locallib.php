@@ -36,12 +36,16 @@ function local_cohortrole_role_assign($cohortid, $roleid, array $userids) {
     $context = context_system::instance();
 
     foreach ($userids as $userid) {
-        try {
-            $user = core_user::get_user($userid, '*', MUST_EXIST);
-            core_user::require_active_user($user);
+        $user = core_user::get_user($userid, '*', MUST_EXIST);
+
+        if (
+            core_user::is_real_user($user->id)
+            &&
+            empty($user->deleted)
+            &&
+            !isguestuser($user)
+        ) {
             role_assign($roleid, $user->id, $context->id, LOCAL_COHORTROLE_ROLE_COMPONENT, $cohortid);
-        } catch (Exception $e) { // phpcs:ignore
-            // Exception is caught. Do nothing.
         }
     }
 }
