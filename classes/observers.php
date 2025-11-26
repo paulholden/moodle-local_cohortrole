@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * ...
+ * @copyright  2013 Paul Holden <paulh@moodle.com>
+ * @copyright  2025 Andrea Jüttner
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_cohortrole;
 
 defined('MOODLE_INTERNAL') || die();
@@ -28,6 +35,17 @@ require_once($CFG->dirroot . '/local/cohortrole/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class observers {
+
+    /**
+     * Check if the event context level is valid for cohort role synchronization
+     *
+     * @param int $contextlevel The context level to check
+     * @return bool True if the context level is system or category
+     */
+    protected static function is_valid_context_level($contextlevel) {
+        return ($contextlevel == CONTEXT_SYSTEM || $contextlevel == CONTEXT_COURSECAT);
+    }
+
     /**
      * Cohort deleted
      *
@@ -35,7 +53,7 @@ class observers {
      * @return void
      */
     public static function cohort_deleted(\core\event\cohort_deleted $event) {
-        if ($event->contextlevel == CONTEXT_SYSTEM) {
+        if (self::is_valid_context_level($event->contextlevel)) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
             $instances = persistent::get_records(['cohortid' => $cohort->id]);
@@ -56,7 +74,7 @@ class observers {
      * @return void
      */
     public static function cohort_member_added(\core\event\cohort_member_added $event) {
-        if ($event->contextlevel == CONTEXT_SYSTEM) {
+        if (self::is_valid_context_level($event->contextlevel)) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
             $instances = persistent::get_records(['cohortid' => $cohort->id]);
@@ -77,7 +95,7 @@ class observers {
      * @return void
      */
     public static function cohort_member_removed(\core\event\cohort_member_removed $event) {
-        if ($event->contextlevel == CONTEXT_SYSTEM) {
+        if (self::is_valid_context_level($event->contextlevel)) {
             $cohort = $event->get_record_snapshot('cohort', $event->objectid);
 
             $instances = persistent::get_records(['cohortid' => $cohort->id]);

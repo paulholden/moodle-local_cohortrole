@@ -19,6 +19,7 @@
  *
  * @package    local_cohortrole
  * @copyright  2013 Paul Holden <paulh@moodle.com>
+ * @copyright  2025 Andrea Juettner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,12 +28,17 @@ define('LOCAL_COHORTROLE_ROLE_COMPONENT', 'local_cohortrole');
 /**
  * Assign users to a role; using local role component
  *
+ * Role assignments are ALWAYS made in the SYSTEM context, regardless of
+ * which context the cohort belongs to. This ensures that system-level
+ * capabilities work correctly.
+ *
  * @param integer $cohortid the id of a cohort
  * @param integer $roleid the id of a role
  * @param array $userids an array of user ids to assign
  * @return void
  */
 function local_cohortrole_role_assign($cohortid, $roleid, array $userids) {
+    // Always assign roles in the SYSTEM context.
     $context = context_system::instance();
 
     foreach ($userids as $userid) {
@@ -59,6 +65,7 @@ function local_cohortrole_role_assign($cohortid, $roleid, array $userids) {
  * @return void
  */
 function local_cohortrole_role_unassign($cohortid, $roleid, array $userids) {
+    // Always unassign from SYSTEM context.
     $context = context_system::instance();
 
     foreach ($userids as $userid) {
@@ -90,7 +97,10 @@ function local_cohortrole_synchronize($cohortid, $roleid) {
  */
 function local_cohortrole_unsynchronize($cohortid, $roleid = null) {
     $params = [
-        'contextid' => context_system::instance()->id, 'component' => LOCAL_COHORTROLE_ROLE_COMPONENT, 'itemid' => $cohortid, ];
+        'contextid' => context_system::instance()->id,
+        'component' => LOCAL_COHORTROLE_ROLE_COMPONENT,
+        'itemid' => $cohortid,
+    ];
 
     if ($roleid === null) {
         $roleids = local_cohortrole_get_cohort_roles($cohortid);

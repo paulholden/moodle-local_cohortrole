@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ ** ...
+ * @copyright  2013 Paul Holden <paulh@moodle.com>
+ * @copyright  2025 Andrea Jüttner
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_cohortrole;
 
 use lang_string;
@@ -28,6 +35,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class persistent extends \core\persistent {
+
     /** Table name for the persistent. */
     const TABLE = 'local_cohortrole';
 
@@ -48,7 +56,7 @@ class persistent extends \core\persistent {
     }
 
     /**
-     * Validate cohort ID
+     * Validate cohort ID - accepts cohorts from system and category contexts
      *
      * @param int $cohortid
      * @return true|lang_string
@@ -56,9 +64,20 @@ class persistent extends \core\persistent {
     protected function validate_cohortid($cohortid) {
         global $DB;
 
-        $context = \context_system::instance();
+        // Get the cohort record.
+        $cohort = $DB->get_record('cohort', ['id' => $cohortid]);
+        if (!$cohort) {
+            return new lang_string('invaliditemid', 'error');
+        }
 
-        if (! $DB->record_exists('cohort', ['id' => $cohortid, 'contextid' => $context->id])) {
+        // Check if the cohort is in system or category context.
+        $context = \context::instance_by_id($cohort->contextid, IGNORE_MISSING);
+        if (!$context) {
+            return new lang_string('invaliditemid', 'error');
+        }
+
+        // Only allow system and category contexts.
+        if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT) {
             return new lang_string('invaliditemid', 'error');
         }
 
@@ -74,7 +93,7 @@ class persistent extends \core\persistent {
     protected function validate_roleid($roleid) {
         global $DB;
 
-        if (! $DB->record_exists('role', ['id' => $roleid])) {
+        if (!$DB->record_exists('role', ['id' => $roleid])) {
             return new lang_string('invalidroleid', 'error');
         }
 
@@ -120,5 +139,15 @@ class persistent extends \core\persistent {
         global $DB;
 
         return $DB->get_record('role', ['id' => $this->get('roleid')], '*', MUST_EXIST);
+    }
+
+    /**
+     * Returns the context for the cohort
+     *
+     * @return \context
+     */
+    public function get_cohort_context() {
+        $cohort = $this->get_cohort();
+        return \context::instance_by_id($cohort->contextid);
     }
 }

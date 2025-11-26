@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * ...
+ * @copyright  2013 Paul Holden <paulh@moodle.com>
+ * @copyright  2025 Andrea Jüttner
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_cohortrole\output;
 
 defined('MOODLE_INTERNAL') || die();
@@ -30,6 +37,7 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class summary_table extends \table_sql implements \renderable {
+
     /**
      * Constructor
      *
@@ -40,6 +48,7 @@ class summary_table extends \table_sql implements \renderable {
         // Define columns.
         $columns = [
             'cohort' => get_string('cohort', 'local_cohortrole'),
+            'cohortcontext' => get_string('cohortcontext', 'local_cohortrole'),
             'role' => get_string('role', 'local_cohortrole'),
             'timecreated' => get_string('modified'),
             'edit' => get_string('edit'),
@@ -49,10 +58,11 @@ class summary_table extends \table_sql implements \renderable {
 
         // Table configuration.
         $this->set_attribute('cellspacing', '0');
-        $this->set_attribute('class', $this->attributes['class'] . ' local-cohortrole-summary-table');
+        $this->set_attribute('class', $this->attributes['class'] .' local-cohortrole-summary-table');
 
         $this->sortable(true, 'timecreated', SORT_DESC);
         $this->no_sorting('edit');
+        $this->no_sorting('cohortcontext');
 
         $this->initialbars(false);
         $this->collapsible(false);
@@ -67,7 +77,7 @@ class summary_table extends \table_sql implements \renderable {
      * @return void
      */
     protected function init_sql() {
-        $fields = persistent::get_sql_fields('cr') . ', c.name AS cohort, r.shortname AS role';
+        $fields = persistent::get_sql_fields('cr') . ', c.name AS cohort, c.contextid AS cohortcontextid, r.shortname AS role';
 
         $from = '{' . persistent::TABLE . '} cr
             JOIN {cohort} c ON c.id = cr.cohortid
@@ -96,6 +106,12 @@ class summary_table extends \table_sql implements \renderable {
      */
     public function format_row($row) {
         $record = persistent::extract_record((object) $row);
+        // Keep cohortcontextid for context column.
+        if (is_array($row)) {
+            $record->cohortcontextid = $row['cohortcontextid'];
+        } else {
+            $record->cohortcontextid = $row->cohortcontextid;
+        }
 
         return parent::format_row($record);
     }
@@ -108,12 +124,39 @@ class summary_table extends \table_sql implements \renderable {
      */
     public function col_cohort(\stdClass $record) {
         $persistent = new persistent(0, $record);
+        $cohort = $persistent->get_cohort();
+        $context = \context::instance_by_id($cohort->contextid);
 
-        return format_string($persistent->get_cohort()->name, true, ['context' => \context_system::instance()]);
+        return format_string($cohort->name, true, ['context' => $context]);
+    }
+
+    /**
+     * Format record cohort context column
+     *
+     * Shows where the cohort is located (System or Category).
+     *
+     * @param stdClass $record
+     * @return string
+     */
+    public function col_cohortcontext(\stdClass $record) {
+        $persistent = new persistent(0, $record);
+        $cohort = $persistent->get_cohort();
+        $context = \context::instance_by_id($cohort->contextid);
+
+        if ($context->contextlevel == CONTEXT_SYSTEM) {
+            return get_string('systemcontext', 'local_cohortrole');
+        } else if ($context->contextlevel == CONTEXT_COURSECAT) {
+            $category = \core_course_category::get($context->instanceid);
+            return get_string('categorycontext', 'local_cohortrole', format_string($category->name));
+        }
+
+        return $context->get_context_name();
     }
 
     /**
      * Format record role column
+     *
+     * Role is always assigned in SYSTEM context.
      *
      * @param stdClass $record
      * @return string
@@ -121,6 +164,7 @@ class summary_table extends \table_sql implements \renderable {
     public function col_role(\stdClass $record) {
         $persistent = new persistent(0, $record);
 
+        // Role is always assigned in system context.
         return role_get_name($persistent->get_role(), \context_system::instance(), ROLENAME_ALIAS);
     }
 
