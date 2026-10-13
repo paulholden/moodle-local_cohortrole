@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="local/cohortrole/db" VERSION="20181210" COMMENT="XMLDB file for Moodle local/cohortrole"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="local_cohortrole" COMMENT="Contains cohort to role synchronization definitions">
